@@ -5,8 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesktopApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="300" Width="350">
     <Grid>
+        <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" Margin="96,64,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="PressButton" Content="Press" HorizontalAlignment="Left" Margin="156,103,0,0" VerticalAlignment="Top" Width="60" Height="30" Click="PressButton_Click"/>
+        <Label x:Name="NameLabel" Content="" HorizontalAlignment="Left" Margin="96,141,0,0" VerticalAlignment="Top"/>
+        <Label Content="Input name" HorizontalAlignment="Left" Margin="96,33,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
