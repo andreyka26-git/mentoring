@@ -14,7 +14,7 @@ namespace DesktopApp
 
         private void PressButton_Click(object sender, RoutedEventArgs e)
         {
-            NameLabel.Content = $"Hello {InputTextBox.Text}!";
+            NameLabel.Content = $"Hello, {InputTextBox.Text}!";
         }
     }
 }
