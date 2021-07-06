@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using ClassLibrary;
 
 namespace DesktopApp
 {
@@ -14,7 +15,7 @@ namespace DesktopApp
 
         private void PressButton_Click(object sender, RoutedEventArgs e)
         {
-            NameLabel.Content = $"Hello, {InputTextBox.Text}!";
+            NameLabel.Content = UserInteraction.GetHello(InputTextBox.Text);
         }
     }
 }

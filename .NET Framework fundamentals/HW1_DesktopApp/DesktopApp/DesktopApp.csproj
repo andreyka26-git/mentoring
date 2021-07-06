@@ -6,4 +6,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="ClassLibrary">
+      <HintPath>..\..\HW2_ClassLibrary\ClassLibrary\bin\Debug\net5.0\ClassLibrary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
