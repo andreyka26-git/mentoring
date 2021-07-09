@@ -1,4 +1,5 @@
 ﻿using System;
+using ClassLibrary;
 
 namespace ConsoleApp
 {
@@ -6,7 +7,7 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine(UserInteraction.GetHello(args[0]));
         }
     }
 }
