@@ -13,8 +13,6 @@ namespace FileSystem.Services
         private List<SystemItemModel> _systemItems = new();
         private readonly Predicate<string> _filterPredicate;
         private bool _isInterrupted;
-        private bool _isDeleteFiles;
-        private bool _isDeleteFolders;
 
         public FileSystemVisitor(IFileSystemProvider provider)
         {
@@ -27,22 +25,27 @@ namespace FileSystem.Services
         public event EventHandler<SystemFoundItemArgs> FileFoundEventHandler;
         public event EventHandler<SystemFoundItemArgs> FolderFoundEventHandler;
         public event EventHandler<InterruptItemArgs> InterruptProcessHandler;
+        public event EventHandler<DeleteItemArgs> DeleteSystemItemsHandler;
 
         public FileSystemVisitor(IFileSystemProvider provider, Predicate<string> filter)
         {
             _provider = provider;
             _filterPredicate = filter;
             InterruptProcessHandler += InterruptProcess;
+            DeleteSystemItemsHandler += DeleteSystemItemsFromResult;
         }
 
-        public IEnumerable<SystemItemModel> GetSystemTreeItems(string path)
+        public IEnumerable<SystemItemModel> GetSystemTreeItems(string path, bool isDeleteFiles = false, bool isDeleteFolders = false)
         {
             _systemItems.Clear();
 
             StartingEventHandler?.Invoke(this, null);
             IterateFileSystemTree(path);
             StartedEventHandler?.Invoke(this, null);
-
+            
+            DeleteSystemItemsHandler?.Invoke(this,
+                new DeleteItemArgs { IsDeleteFiles = isDeleteFiles, IsDeleteFolders = isDeleteFolders });
+            
             return _systemItems;
         }
 
@@ -87,17 +90,13 @@ namespace FileSystem.Services
             }
         }
 
-        private void DeleteFilesFromResult(object sender, DeleteItemArgs args)
+        private void DeleteSystemItemsFromResult(object sender, DeleteItemArgs args)
         {
             if (args.IsDeleteFiles)
             {
                 _systemItems = _systemItems.Where(f => f.IsFolder).ToList();
             }
-        }
-
-        private void DeleteFoldersFromResult(object sender, DeleteItemArgs args)
-        {
-            if (args.IsDeleteFolders)
+            else if (args.IsDeleteFolders)
             {
                 _systemItems = _systemItems.Where(f => f.IsFile).ToList();
             }
