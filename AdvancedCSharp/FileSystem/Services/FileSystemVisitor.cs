@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FileSystem.Interfaces;
@@ -14,6 +15,12 @@ namespace FileSystem.Services
         private bool _isInterrupted;
         private bool _isDeleteFiles;
         private bool _isDeleteFolders;
+        
+        public FileSystemVisitor(IFileSystemProvider provider)
+        {
+            _provider = provider;
+            //TODO check if _filterPredicate equals to null || or set the default one always.
+        }
 
         public event EventHandler<EventArgs> StartingEventHandler;
         public event EventHandler<EventArgs> StartedEventHandler;
@@ -22,15 +29,12 @@ namespace FileSystem.Services
         public event EventHandler<SystemItemArgs> FilteredFilesFoundEventHandler;
         public event EventHandler<SystemItemArgs> FilteredFoldersFoundEventHandler;
 
-        public FileSystemVisitor(IFileSystemProvider provider)
-        {
-            _provider = provider;
-        }
-
         public FileSystemVisitor(IFileSystemProvider provider, Predicate<string> filter)
         {
             _provider = provider;
             _filterPredicate = filter;
+            //TODO subscribe to all events
+
         }
 
         public IEnumerable<SystemItemModel> GetSystemTreeItems(string path)
@@ -40,23 +44,8 @@ namespace FileSystem.Services
             StartingEventHandler?.Invoke(this, null);
             IterateFileSystemTree(path);
             StartedEventHandler?.Invoke(this, null);
-
-            FilesFoundEventHandler?.Invoke(this,
-                new SystemItemArgs { Items = _systemItems.Where(i => i.IsFile) });
-            FoldersFoundEventHandler?.Invoke(this,
-                new SystemItemArgs { Items = _systemItems.Where(i => i.IsFolder) });
-            FilterSystemItems();
-            FilteredFilesFoundEventHandler?.Invoke(this,
-                new SystemItemArgs { Items = _systemItems.Where(i => i.IsFile) });
-            FilteredFoldersFoundEventHandler?.Invoke(this,
-                new SystemItemArgs { Items = _systemItems.Where(i => i.IsFolder) });
-
-            if (_isDeleteFiles)
-                return _systemItems.Where(p => p.IsFolder).ToList();
-
-            if (_isDeleteFolders)
-                return _systemItems.Where(p => p.IsFile).ToList();
-
+            
+            //TODO return enumerator
             return _systemItems;
         }
 
@@ -64,6 +53,8 @@ namespace FileSystem.Services
         {
             if (_isInterrupted)
             {
+                //TODO emit
+                InterruptedEventHandler(_isInterrupted);
                 return;
             }
 
@@ -72,36 +63,66 @@ namespace FileSystem.Services
 
             foreach (var fileInfo in files)
             {
+                //TODO add filtering here
+                //TODO emit
+                FileFoundEventHandler(fileInfo, _isDeleted);
+                
                 _systemItems.Add(new SystemItemModel { Name = fileInfo.Name, Path = fileInfo.FullName });
             }
 
             foreach (var folderInfo in directories)
             {
+                //TODO emit
+                //TODO add filtering here
+                FolderFoundEventHandler(folderInfo, _isDeleted);
                 _systemItems.Add(new SystemItemModel { Name = folderInfo.Name, Path = folderInfo.FullName });
                 IterateFileSystemTree(folderInfo.FullName);
             }
         }
-        private void FilterSystemItems()
+
+        private void InterruptProcess(object sender, SystemItemArgs args)
         {
-            if (_filterPredicate != null)
+            //TODO don't change state of the object, just log and return;
+        }
+
+        private void DeleteFilesFromResult(object sender, SystemItemArgs args)
+        {
+            //TODO drop file from SystemItemArgs from _systemitems;
+        }
+
+        private void DeleteFoldersFromResult(object sender, SystemItemArgs args)
+        {
+            //TODO drop folder from SystemItemArgs from _systemitems;
+        }
+
+
+        //TODO implement custom enumerator.
+        public class CustomEnumerator : IEnumerator
+        {
+            private readonly List<SystemItemModel> _collection;
+
+            private int index = 0;
+            
+            public CustomEnumerator(List<SystemItemModel> collection)
             {
-                _systemItems = _systemItems.Where(systemItem => _filterPredicate(systemItem.Name)).ToList();
+                _collection = collection;
             }
-        }
 
-        public void InterruptProcess(object sender, SystemItemArgs args)
-        {
-            _isInterrupted = args.IsInterruptedProcess;
-        }
+            public bool MoveNext()
+            {
+                if (index + 1 > _collection.Count - 1)
+                    return false;
 
-        public void DeleteFilesFromResult(object sender, SystemItemArgs args)
-        {
-            _isDeleteFiles = args.IsDeleteFiles;
-        }
+                index++;
+                return true;
+            }
 
-        public void DeleteFoldersFromResult(object sender, SystemItemArgs args)
-        {
-            _isDeleteFolders = args.isDeleteFolders;
+            public void Reset()
+            {
+                index = 0;
+            }
+
+            public object Current => _collection[index];
         }
     }
 }

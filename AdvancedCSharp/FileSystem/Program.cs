@@ -1,4 +1,5 @@
 ﻿using System;
+using FileSystem.Models;
 using FileSystem.Services;
 
 namespace FileSystem
@@ -7,11 +8,15 @@ namespace FileSystem
     {
         static void Main(string[] args)
         {
+            const string Path = "C:\\Users\\Serhii_Yurko\\OneDrive - EPAM\\Desktop\\test";
+
             var fileIterator = new FileSystemVisitor(new PhysicalFileSystemProvider());
-            var result = fileIterator.GetSystemTreeItems("C:\\Users\\Serhii_Yurko\\OneDrive - EPAM\\Desktop\\test");
+            var result = fileIterator.GetSystemTreeItems(Path);
+            
             foreach (var systemItemModel in result)
             {
-                Console.WriteLine(systemItemModel.Path + "   " + systemItemModel.Name);
+                //TODO use $"";
+                Console.WriteLine($"{systemItemModel.Path}   {systemItemModel.Name}");
             }
         }
     }
