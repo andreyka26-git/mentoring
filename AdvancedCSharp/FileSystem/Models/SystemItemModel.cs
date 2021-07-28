@@ -4,17 +4,17 @@ namespace FileSystem.Models
 {
     public class SystemItemModel
     {
-        public SystemItemModel(string path, string name, bool isFile, bool isDirectory)
+        public SystemItemModel(string path, string name, bool isFile)
         {
             Path = path;
-                .....
+            Name = name;
+            IsFile = isFile;
+            IsFolder = !isFile;
         }
 
-        public string Path { get; private set; }
-        public string Name { get; private set; }
-        //TODO set when initialize object
-        public bool IsFile => File.Exists(Path);
-        //TODO set when initialize object
-        public bool IsFolder => Directory.Exists(Path);
+        public string Path { get; }
+        public string Name { get; }
+        public bool IsFile { get; }
+        public bool IsFolder { get; }
     }
 }

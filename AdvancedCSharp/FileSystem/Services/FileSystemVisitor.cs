@@ -7,7 +7,7 @@ using FileSystem.Models;
 
 namespace FileSystem.Services
 {
-    public class FileSystemVisitor : IFileSystemVisitor
+    public class FileSystemVisitor : IFileSystemVisitor, IEnumerable
     {
         private readonly IFileSystemProvider _provider;
         private List<SystemItemModel> _systemItems = new();
@@ -15,26 +15,24 @@ namespace FileSystem.Services
         private bool _isInterrupted;
         private bool _isDeleteFiles;
         private bool _isDeleteFolders;
-        
+
         public FileSystemVisitor(IFileSystemProvider provider)
         {
             _provider = provider;
-            //TODO check if _filterPredicate equals to null || or set the default one always.
+            _filterPredicate = value => true;
         }
 
         public event EventHandler<EventArgs> StartingEventHandler;
         public event EventHandler<EventArgs> StartedEventHandler;
-        public event EventHandler<SystemItemArgs> FilesFoundEventHandler;
-        public event EventHandler<SystemItemArgs> FoldersFoundEventHandler;
-        public event EventHandler<SystemItemArgs> FilteredFilesFoundEventHandler;
-        public event EventHandler<SystemItemArgs> FilteredFoldersFoundEventHandler;
+        public event EventHandler<SystemItemArgs> FileFoundEventHandler;
+        public event EventHandler<SystemItemArgs> FolderFoundEventHandler;
+        public event EventHandler<InterruptItemArgs> InterruptProcessHandler;
 
         public FileSystemVisitor(IFileSystemProvider provider, Predicate<string> filter)
         {
             _provider = provider;
             _filterPredicate = filter;
-            //TODO subscribe to all events
-
+            InterruptProcessHandler += InterruptProcess;
         }
 
         public IEnumerable<SystemItemModel> GetSystemTreeItems(string path)
@@ -44,8 +42,7 @@ namespace FileSystem.Services
             StartingEventHandler?.Invoke(this, null);
             IterateFileSystemTree(path);
             StartedEventHandler?.Invoke(this, null);
-            
-            //TODO return enumerator
+
             return _systemItems;
         }
 
@@ -53,8 +50,7 @@ namespace FileSystem.Services
         {
             if (_isInterrupted)
             {
-                //TODO emit
-                InterruptedEventHandler(_isInterrupted);
+                InterruptProcessHandler?.Invoke(this, new InterruptItemArgs { IsInterrupt = true });
                 return;
             }
 
@@ -63,66 +59,53 @@ namespace FileSystem.Services
 
             foreach (var fileInfo in files)
             {
-                //TODO add filtering here
-                //TODO emit
-                FileFoundEventHandler(fileInfo, _isDeleted);
-                
-                _systemItems.Add(new SystemItemModel { Name = fileInfo.Name, Path = fileInfo.FullName });
+                if (!_filterPredicate(fileInfo.Name))
+                    continue;
+
+                var item = new SystemItemModel(fileInfo.FullName, fileInfo.Name, true);
+                FileFoundEventHandler?.Invoke(fileInfo, new SystemItemArgs { Item = item });
+                _systemItems.Add(item);
             }
 
             foreach (var folderInfo in directories)
             {
-                //TODO emit
-                //TODO add filtering here
-                FolderFoundEventHandler(folderInfo, _isDeleted);
-                _systemItems.Add(new SystemItemModel { Name = folderInfo.Name, Path = folderInfo.FullName });
+                if (!_filterPredicate(folderInfo.Name))
+                    continue;
+
+                var item = new SystemItemModel(folderInfo.FullName, folderInfo.Name, false);
+                FolderFoundEventHandler?.Invoke(folderInfo, new SystemItemArgs { Item = item });
+                _systemItems.Add(item);
                 IterateFileSystemTree(folderInfo.FullName);
             }
         }
 
-        private void InterruptProcess(object sender, SystemItemArgs args)
+        private void InterruptProcess(object sender, InterruptItemArgs args)
         {
-            //TODO don't change state of the object, just log and return;
+            if (args.IsInterrupt)
+            {
+                Console.WriteLine("Searching has been interrupted.");
+            }
         }
 
         private void DeleteFilesFromResult(object sender, SystemItemArgs args)
         {
-            //TODO drop file from SystemItemArgs from _systemitems;
+            if (args.IsDeleteFiles)
+            {
+                _systemItems = _systemItems.Where(f => f.IsFolder).ToList();
+            }
         }
 
         private void DeleteFoldersFromResult(object sender, SystemItemArgs args)
         {
-            //TODO drop folder from SystemItemArgs from _systemitems;
+            if (args.IsDeleteFolders)
+            {
+                _systemItems = _systemItems.Where(f => f.IsFile).ToList();
+            }
         }
 
-
-        //TODO implement custom enumerator.
-        public class CustomEnumerator : IEnumerator
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            private readonly List<SystemItemModel> _collection;
-
-            private int index = 0;
-            
-            public CustomEnumerator(List<SystemItemModel> collection)
-            {
-                _collection = collection;
-            }
-
-            public bool MoveNext()
-            {
-                if (index + 1 > _collection.Count - 1)
-                    return false;
-
-                index++;
-                return true;
-            }
-
-            public void Reset()
-            {
-                index = 0;
-            }
-
-            public object Current => _collection[index];
+            return new FileSystemEnumerator(_systemItems);
         }
     }
 }

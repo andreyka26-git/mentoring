@@ -8,15 +8,14 @@ namespace FileSystem
     {
         static void Main(string[] args)
         {
-            const string Path = "C:\\Users\\Serhii_Yurko\\OneDrive - EPAM\\Desktop\\test";
+            const string path = "C:\\Users\\Serhii_Yurko\\OneDrive - EPAM\\Desktop\\test";
 
             var fileIterator = new FileSystemVisitor(new PhysicalFileSystemProvider());
-            var result = fileIterator.GetSystemTreeItems(Path);
+            var result = fileIterator.GetSystemTreeItems(path);
             
-            foreach (var systemItemModel in result)
+            foreach (SystemItemModel systemItemModel in fileIterator)
             {
-                //TODO use $"";
-                Console.WriteLine($"{systemItemModel.Path}   {systemItemModel.Name}");
+                Console.WriteLine($"{systemItemModel.Path}  {systemItemModel.Name}");
             }
         }
     }
