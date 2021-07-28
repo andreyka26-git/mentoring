@@ -24,8 +24,8 @@ namespace FileSystem.Services
 
         public event EventHandler<EventArgs> StartingEventHandler;
         public event EventHandler<EventArgs> StartedEventHandler;
-        public event EventHandler<SystemItemArgs> FileFoundEventHandler;
-        public event EventHandler<SystemItemArgs> FolderFoundEventHandler;
+        public event EventHandler<SystemFoundItemArgs> FileFoundEventHandler;
+        public event EventHandler<SystemFoundItemArgs> FolderFoundEventHandler;
         public event EventHandler<InterruptItemArgs> InterruptProcessHandler;
 
         public FileSystemVisitor(IFileSystemProvider provider, Predicate<string> filter)
@@ -63,7 +63,7 @@ namespace FileSystem.Services
                     continue;
 
                 var item = new SystemItemModel(fileInfo.FullName, fileInfo.Name, true);
-                FileFoundEventHandler?.Invoke(fileInfo, new SystemItemArgs { Item = item });
+                FileFoundEventHandler?.Invoke(fileInfo, new SystemFoundItemArgs { Item = item });
                 _systemItems.Add(item);
             }
 
@@ -73,7 +73,7 @@ namespace FileSystem.Services
                     continue;
 
                 var item = new SystemItemModel(folderInfo.FullName, folderInfo.Name, false);
-                FolderFoundEventHandler?.Invoke(folderInfo, new SystemItemArgs { Item = item });
+                FolderFoundEventHandler?.Invoke(folderInfo, new SystemFoundItemArgs { Item = item });
                 _systemItems.Add(item);
                 IterateFileSystemTree(folderInfo.FullName);
             }
@@ -87,7 +87,7 @@ namespace FileSystem.Services
             }
         }
 
-        private void DeleteFilesFromResult(object sender, SystemItemArgs args)
+        private void DeleteFilesFromResult(object sender, DeleteItemArgs args)
         {
             if (args.IsDeleteFiles)
             {
@@ -95,7 +95,7 @@ namespace FileSystem.Services
             }
         }
 
-        private void DeleteFoldersFromResult(object sender, SystemItemArgs args)
+        private void DeleteFoldersFromResult(object sender, DeleteItemArgs args)
         {
             if (args.IsDeleteFolders)
             {
