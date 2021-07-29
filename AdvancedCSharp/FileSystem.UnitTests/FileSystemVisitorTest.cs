@@ -145,7 +145,7 @@ namespace FileSystem.UnitTests
             };
 
             _fileSystemProviderMock.Setup(e => e.GetFiles(path)).Returns(() => filesFolder);
-            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object, file => file.EndsWith(".txt"), false);
+            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object, file => file.EndsWith(".txt"));
 
             // Act
             var actualResult = _fileSystemVisitor.GetSystemTreeItems(path).ToList();
@@ -168,10 +168,10 @@ namespace FileSystem.UnitTests
             };
 
             _fileSystemProviderMock.Setup(e => e.GetFiles(path)).Returns(() => files);
-            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object, file => file.EndsWith(".txt"), true);
+            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object, file => file.EndsWith(".txt"));
 
             // Act
-            var actualResult = _fileSystemVisitor.GetSystemTreeItems(path).ToList();
+            var actualResult = _fileSystemVisitor.GetSystemTreeItems(path, isInterrupted: true).ToList();
 
             // Assert
             Assert.NotNull(actualResult);
@@ -199,7 +199,7 @@ namespace FileSystem.UnitTests
             _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object);
 
             // Act
-            var actualResult = _fileSystemVisitor.GetSystemTreeItems(path, true).ToList();
+            var actualResult = _fileSystemVisitor.GetSystemTreeItems(path, isDeleteFile: true).ToList();
 
             // Assert
             Assert.NotNull(actualResult);

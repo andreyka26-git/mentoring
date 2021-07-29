@@ -15,14 +15,10 @@ namespace FileSystem.Services
         private bool _isDeleteFile;
         private bool _isDeleteFolder;
 
-        public FileSystemVisitor(IFileSystemProvider provider, Predicate<string> filter, bool isInterrupted)
+        public FileSystemVisitor(IFileSystemProvider provider, Predicate<string> filter)
         {
             _provider = provider;
             _filterPredicate = filter;
-            _isInterrupted = isInterrupted;
-
-            FileFoundEventHandler += ItemFoundEventHandler;
-            FolderFoundEventHandler += ItemFoundEventHandler;
         }
 
         public FileSystemVisitor(IFileSystemProvider provider)
@@ -36,11 +32,15 @@ namespace FileSystem.Services
         public event EventHandler<SystemFoundItemArgs> FileFoundEventHandler;
         public event EventHandler<SystemFoundItemArgs> FolderFoundEventHandler;
 
-        public IEnumerable<SystemItemModel> GetSystemTreeItems(string path, bool isDeleteFile = false, bool isDeleteFolder = false)
+        public IEnumerable<SystemItemModel> GetSystemTreeItems(string path, bool isInterrupted = false, bool isDeleteFile = false, bool isDeleteFolder = false)
         {
+            FileFoundEventHandler += ItemFoundEventHandler;
+            FolderFoundEventHandler += ItemFoundEventHandler;
+
             _systemItems.Clear();
             _isDeleteFile = isDeleteFile;
             _isDeleteFolder = isDeleteFolder;
+            _isInterrupted = isInterrupted;
 
             StartingEventHandler?.Invoke(this, null);
             IterateFileSystemTree(path);
@@ -67,7 +67,7 @@ namespace FileSystem.Services
                 var item = new SystemItemModel(fileInfo.FullName, fileInfo.Name, true);
                 _systemItems.Add(item);
 
-                FileFoundEventHandler?.Invoke(fileInfo, new SystemFoundItemArgs { Item = item, IsDeleteItem = _isDeleteFile });
+                FileFoundEventHandler?.Invoke(fileInfo, new SystemFoundItemArgs { Item = item, IsDeleteItem = _isDeleteFile, IsInterrupt = _isInterrupted});
             }
 
             foreach (var folderInfo in directories)
@@ -78,7 +78,7 @@ namespace FileSystem.Services
                 var item = new SystemItemModel(folderInfo.FullName, folderInfo.Name, false);
                 _systemItems.Add(item);
 
-                FolderFoundEventHandler?.Invoke(folderInfo, new SystemFoundItemArgs { Item = item, IsDeleteItem = _isDeleteFolder });
+                FolderFoundEventHandler?.Invoke(folderInfo, new SystemFoundItemArgs { Item = item, IsDeleteItem = _isDeleteFolder, IsInterrupt = _isInterrupted});
 
                 IterateFileSystemTree(folderInfo.FullName);
             }
