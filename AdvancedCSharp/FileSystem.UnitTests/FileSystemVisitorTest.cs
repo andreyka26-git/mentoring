@@ -155,5 +155,85 @@ namespace FileSystem.UnitTests
             Assert.Equal(filesFolder[1].Name, actualResult[0].Name);
             Assert.Equal(filesFolder[3].Name, actualResult[1].Name);
         }
+
+        [Fact]
+        public void GetSystemTreeItems_WhenProcessInterrupted_ReturnEmptyFiles()
+        {
+            // Arrange
+            const string path = "C:/";
+            var files = new[]
+            {
+                new FileInfo("C:/video.avi"),
+                new FileInfo("C:/document.txt"),
+            };
+
+            _fileSystemProviderMock.Setup(e => e.GetFiles(path)).Returns(() => files);
+            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object, file => file.EndsWith(".txt"), true);
+
+            // Act
+            var actualResult = _fileSystemVisitor.GetSystemTreeItems(path).ToList();
+
+            // Assert
+            Assert.NotNull(actualResult);
+            Assert.Empty(actualResult);
+        }
+
+        [Fact]
+        public void GetSystemTreeItems_WhenDeleteFilePassed_ReturnOnlyFolders()
+        {
+            // Arrange
+            const string path = "C:/";
+            var files = new[]
+            {
+                new FileInfo("C:/video.avi"),
+                new FileInfo("C:/document.txt"),
+            };
+
+            var folders = new[]
+            {
+                new DirectoryInfo("C:/folder1"),
+            };
+
+            _fileSystemProviderMock.Setup(e => e.GetFiles(path)).Returns(() => files);
+            _fileSystemProviderMock.Setup(e => e.GetDirectories(path)).Returns(() => folders);
+            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object);
+
+            // Act
+            var actualResult = _fileSystemVisitor.GetSystemTreeItems(path, true).ToList();
+
+            // Assert
+            Assert.NotNull(actualResult);
+            Assert.Equal(folders.Length, actualResult.Count);
+            Assert.Equal(folders[0].Name, actualResult[0].Name);
+        }
+
+        [Fact]
+        public void GetSystemTreeItems_WhenDeleteFoldersPassed_ReturnOnlyFolders()
+        {
+            // Arrange
+            const string path = "C:/";
+            var files = new[]
+            {
+                new FileInfo("C:/video.avi"),
+            };
+
+            var folders = new[]
+            {
+                new DirectoryInfo("C:/folder1"),
+                new DirectoryInfo("C:/document.txt"),
+            };
+
+            _fileSystemProviderMock.Setup(e => e.GetFiles(path)).Returns(() => files);
+            _fileSystemProviderMock.Setup(e => e.GetDirectories(path)).Returns(() => folders);
+            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object);
+
+            // Act
+            var actualResult = _fileSystemVisitor.GetSystemTreeItems(path, isDeleteFolder: true).ToList();
+
+            // Assert
+            Assert.NotNull(actualResult);
+            Assert.Equal(files.Length, actualResult.Count);
+            Assert.Equal(files[0].Name, actualResult[0].Name);
+        }
     }
 }
