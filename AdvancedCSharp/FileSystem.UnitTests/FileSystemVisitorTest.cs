@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FileSystem.Interfaces;
+using FileSystem.Models;
 using FileSystem.Services;
 using Moq;
 using Xunit;
@@ -143,7 +145,7 @@ namespace FileSystem.UnitTests
             };
 
             _fileSystemProviderMock.Setup(e => e.GetFiles(path)).Returns(() => filesFolder);
-            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object, file => file.EndsWith(".txt"));
+            _fileSystemVisitor = new FileSystemVisitor(_fileSystemProviderMock.Object, file => file.EndsWith(".txt"), false);
 
             // Act
             var actualResult = _fileSystemVisitor.GetSystemTreeItems(path).ToList();

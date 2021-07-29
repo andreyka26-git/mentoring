@@ -14,6 +14,19 @@ namespace FileSystem.Services
         private readonly Predicate<string> _filterPredicate;
         private bool _isInterrupted;
 
+        public FileSystemVisitor(IFileSystemProvider provider, Predicate<string> filter, bool isInterrupted)
+        {
+            _provider = provider;
+            _filterPredicate = filter;
+            InterruptProcessHandler += InterruptProcess;
+            _isInterrupted = isInterrupted;
+
+            //TODO subscribe to
+
+            //TODO subscribe to 
+            DeleteSystemItemsHandler += DeleteSystemItemsFromResult;
+        }
+
         public FileSystemVisitor(IFileSystemProvider provider)
         {
             _provider = provider;
@@ -24,16 +37,13 @@ namespace FileSystem.Services
         public event EventHandler<EventArgs> StartedEventHandler;
         public event EventHandler<SystemFoundItemArgs> FileFoundEventHandler;
         public event EventHandler<SystemFoundItemArgs> FolderFoundEventHandler;
+
+        //TODO drop it
         public event EventHandler<InterruptItemArgs> InterruptProcessHandler;
+
+        //TODO drop it please we don't need this event according to the task
         public event EventHandler<DeleteItemArgs> DeleteSystemItemsHandler;
 
-        public FileSystemVisitor(IFileSystemProvider provider, Predicate<string> filter)
-        {
-            _provider = provider;
-            _filterPredicate = filter;
-            InterruptProcessHandler += InterruptProcess;
-            DeleteSystemItemsHandler += DeleteSystemItemsFromResult;
-        }
 
         public IEnumerable<SystemItemModel> GetSystemTreeItems(string path, bool isDeleteFiles = false, bool isDeleteFolders = false)
         {
@@ -43,6 +53,7 @@ namespace FileSystem.Services
             IterateFileSystemTree(path);
             StartedEventHandler?.Invoke(this, null);
             
+            //TODO drop
             DeleteSystemItemsHandler?.Invoke(this,
                 new DeleteItemArgs { IsDeleteFiles = isDeleteFiles, IsDeleteFolders = isDeleteFolders });
             
@@ -53,7 +64,6 @@ namespace FileSystem.Services
         {
             if (_isInterrupted)
             {
-                InterruptProcessHandler?.Invoke(this, new InterruptItemArgs { IsInterrupt = true });
                 return;
             }
 
@@ -66,8 +76,9 @@ namespace FileSystem.Services
                     continue;
 
                 var item = new SystemItemModel(fileInfo.FullName, fileInfo.Name, true);
-                FileFoundEventHandler?.Invoke(fileInfo, new SystemFoundItemArgs { Item = item });
                 _systemItems.Add(item);
+
+                FileFoundEventHandler?.Invoke(fileInfo, new SystemFoundItemArgs { Item = item });
             }
 
             foreach (var folderInfo in directories)
@@ -76,8 +87,10 @@ namespace FileSystem.Services
                     continue;
 
                 var item = new SystemItemModel(folderInfo.FullName, folderInfo.Name, false);
-                FolderFoundEventHandler?.Invoke(folderInfo, new SystemFoundItemArgs { Item = item });
                 _systemItems.Add(item);
+
+                FolderFoundEventHandler?.Invoke(folderInfo, new SystemFoundItemArgs { Item = item });
+
                 IterateFileSystemTree(folderInfo.FullName);
             }
         }
@@ -90,6 +103,17 @@ namespace FileSystem.Services
             }
         }
 
+        private void ItemFoundEventHandler(object sender, SystemFoundItemArgs args)
+        {
+            if (args.IsInterrupt)
+                _isInterrupted = true;
+
+            if (args.IsDelete)
+                _systemItems.Remove(args.Item);
+        }
+
+
+        //TODO drop it instead of it implement methods for FolderFoundEventHandler and FileFoundEventHandltems.
         private void DeleteSystemItemsFromResult(object sender, DeleteItemArgs args)
         {
             if (args.IsDeleteFiles)

@@ -16,5 +16,14 @@ namespace FileSystem.Models
         public string Name { get; }
         public bool IsFile { get; }
         public bool IsFolder { get; }
+
+        //TODO implement equals
+        public override bool Equals(object obj)
+        {
+            if (!(obj is SystemItemModel model))
+                return false;
+
+            return model.Path == Path ? true : false;
+        }
     }
 }
