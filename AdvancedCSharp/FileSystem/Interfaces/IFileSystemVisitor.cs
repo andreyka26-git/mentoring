@@ -5,6 +5,6 @@ namespace FileSystem.Interfaces
 {
     public interface IFileSystemVisitor
     {
-        IEnumerable<SystemItemModel> GetSystemTreeItems(string path, bool isDeleteFiles = false, bool isDeleteFolders = false);
+        IEnumerable<SystemItemModel> GetSystemTreeItems(string path, bool isDeleteFile = false, bool isDeleteFolder = false);
     }
 }

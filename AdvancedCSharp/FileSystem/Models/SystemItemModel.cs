@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System;
 
 namespace FileSystem.Models
 {
@@ -17,13 +17,15 @@ namespace FileSystem.Models
         public bool IsFile { get; }
         public bool IsFolder { get; }
 
-        //TODO implement equals
         public override bool Equals(object obj)
         {
-            if (!(obj is SystemItemModel model))
-                return false;
+            return obj is SystemItemModel model && Path.Equals(model.Path) && Name.Equals(model.Name) &&
+                   IsFile.Equals(model.IsFile) && IsFolder.Equals(model.IsFolder);
+        }
 
-            return model.Path == Path ? true : false;
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Path, Name, IsFile, IsFolder);
         }
     }
 }
