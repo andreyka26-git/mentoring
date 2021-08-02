@@ -7,11 +7,23 @@ namespace Task2
 {
     public class NumberParser : INumberParser
     {
-        //TODO make either const or readonly
-        private char PlusSign = '+';
-        private char MinusSign = '-';
-        private char WhiteSpace = ' ';
-        private char NullNumber = '0';
+        private const char PlusSign = '+';
+        private const char MinusSign = '-';
+        private const char WhiteSpace = ' ';
+        private const char NullNumber = '0';
+        private readonly Dictionary<char, int> _digitsInterpreter = new Dictionary<char, int>
+        {
+            {'0', 0},
+            {'1', 1},
+            {'2', 2},
+            {'3', 3},
+            {'4', 4},
+            {'5', 5},
+            {'6', 6},
+            {'7', 7},
+            {'8', 8},
+            {'9', 9}
+        };
 
         public int Parse(string stringValue)
         {
@@ -27,23 +39,23 @@ namespace Task2
                 throw new FormatException("Input argument is incorrect format");
             }
 
+            stringValue = stringValue.Trim();
             var sign = PlusSign;
-            var preparedString = stringValue;
+            var index = 0;
 
-            //TODO rework to optimized memory algorithm
-            if (IsSign(stringValue[0]))
+            if (IsSign(stringValue[index]))
             {
-                sign = stringValue[0];
-                preparedString = preparedString[1..];
+                sign = stringValue[index];
+                index++;
             }
 
-            var indexNumberNotNull = preparedString.ToCharArray().ToList().FindIndex(c => c != NullNumber);
-            if (indexNumberNotNull != -1)
-            {
-                preparedString = preparedString[indexNumberNotNull..];
-            }
+            while (index < stringValue.Length && stringValue[index] == NullNumber)
+                index++;
 
-
+            if (index >= stringValue.Length)
+                return 0;
+           
+            var preparedString = stringValue.Substring(index);
             foreach (var digit in preparedString)
             {
                 if (digit == WhiteSpace)
@@ -57,24 +69,9 @@ namespace Task2
 
         private int GetDigit(char digit)
         {
-            //TODO remove it to field
-            var digitsInterpreter = new Dictionary<char, int>
+            if (_digitsInterpreter.ContainsKey(digit))
             {
-                {'0', 0},
-                {'1', 1},
-                {'2', 2},
-                {'3', 3},
-                {'4', 4},
-                {'5', 5},
-                {'6', 6},
-                {'7', 7},
-                {'8', 8},
-                {'9', 9},
-            };
-
-            if (digitsInterpreter.ContainsKey(digit))
-            {
-                return digitsInterpreter[digit];
+                return _digitsInterpreter[digit];
             }
 
             throw new FormatException("Input argument is incorrect format");
