@@ -7,6 +7,7 @@ namespace Task2
 {
     public class NumberParser : INumberParser
     {
+        //TODO make either const or readonly
         private char PlusSign = '+';
         private char MinusSign = '-';
         private char WhiteSpace = ' ';
@@ -29,6 +30,7 @@ namespace Task2
             var sign = PlusSign;
             var preparedString = stringValue;
 
+            //TODO rework to optimized memory algorithm
             if (IsSign(stringValue[0]))
             {
                 sign = stringValue[0];
@@ -55,6 +57,7 @@ namespace Task2
 
         private int GetDigit(char digit)
         {
+            //TODO remove it to field
             var digitsInterpreter = new Dictionary<char, int>
             {
                 {'0', 0},
