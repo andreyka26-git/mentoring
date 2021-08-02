@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 
 namespace Task2
 {
     public class NumberParser : INumberParser
     {
-        //TODO put signs here
         private char PlusSign = '+';
+        private char MinusSign = '-';
+        private char WhiteSpace = ' ';
+        private char NullNumber = '0';
 
         public int Parse(string stringValue)
         {
-            //TODO change to List<int>
-            var parsedDigits = new List<char>();
+            var parsedDigits = new List<int>();
 
             if (stringValue == null)
             {
@@ -24,67 +26,66 @@ namespace Task2
                 throw new FormatException("Input argument is incorrect format");
             }
 
-            var index = 0;
-            
             var sign = PlusSign;
+            var preparedString = stringValue;
 
-            if (IsSign(stringValue[index]))
-                sign = stringValue[index];
+            if (IsSign(stringValue[0]))
+            {
+                sign = stringValue[0];
+                preparedString = preparedString[1..];
+            }
 
-            while (stringValue[index] == 0)
-                index++;
+            var indexNumberNotNull = preparedString.ToCharArray().ToList().FindIndex(c => c != NullNumber);
+            if (indexNumberNotNull != -1)
+            {
+                preparedString = preparedString[indexNumberNotNull..];
+            }
 
-            //TODO check bounds
-            var preparedString = stringValue.Substring(index);
 
             foreach (var digit in preparedString)
             {
-                //TODO decouple to constant
-                if (digit == ' ')
+                if (digit == WhiteSpace)
                     continue;
 
-                if (GetDigit(digit) != null)
-                {
-                    parsedDigits.Add(digit);
-                }
-                else
-                {
-                    throw new FormatException("Input argument is incorrect format");
-                }
+                parsedDigits.Add(GetDigit(digit));
             }
 
             return ToInt(parsedDigits, sign);
         }
 
-        //TODO return int instead of nullable
-        //TODO in case of not parsed digit throw FormatException
-        private int? GetDigit(char digit)
+        private int GetDigit(char digit)
         {
-            //TODO get it throug the dictionary
-            var number = 0;
-            while (number != 10)
+            var digitsInterpreter = new Dictionary<char, int>
             {
-                if (number.ToString() == digit.ToString())
-                {
-                    return number;
-                }
+                {'0', 0},
+                {'1', 1},
+                {'2', 2},
+                {'3', 3},
+                {'4', 4},
+                {'5', 5},
+                {'6', 6},
+                {'7', 7},
+                {'8', 8},
+                {'9', 9},
+            };
 
-                number++;
+            if (digitsInterpreter.ContainsKey(digit))
+            {
+                return digitsInterpreter[digit];
             }
 
-            return null;
+            throw new FormatException("Input argument is incorrect format");
         }
 
         private bool IsSign(char value)
         {
-            //TODO change to constands
-            return value == '-' || value == PlusSign;
+            return value == MinusSign || value == PlusSign;
         }
 
         private int ToInt(List<int> parsedDigits, char sign)
         {
             var number = parsedDigits[0];
-            if (sign == '-')
+            if (sign == MinusSign)
             {
                 number *= -1;
             }
