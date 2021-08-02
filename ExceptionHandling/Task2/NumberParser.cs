@@ -6,8 +6,12 @@ namespace Task2
 {
     public class NumberParser : INumberParser
     {
+        //TODO put signs here
+        private char PlusSign = '+';
+
         public int Parse(string stringValue)
         {
+            //TODO change to List<int>
             var parsedDigits = new List<char>();
 
             if (stringValue == null)
@@ -20,12 +24,22 @@ namespace Task2
                 throw new FormatException("Input argument is incorrect format");
             }
 
-            var digitsArray = stringValue.ToCharArray();
-            var sign = TrimSign(ref digitsArray);
-            TrimNullNumbers(ref digitsArray);
+            var index = 0;
+            
+            var sign = PlusSign;
 
-            foreach (var digit in digitsArray)
+            if (IsSign(stringValue[index]))
+                sign = stringValue[index];
+
+            while (stringValue[index] == 0)
+                index++;
+
+            //TODO check bounds
+            var preparedString = stringValue.Substring(index);
+
+            foreach (var digit in preparedString)
             {
+                //TODO decouple to constant
                 if (digit == ' ')
                     continue;
 
@@ -42,17 +56,11 @@ namespace Task2
             return ToInt(parsedDigits, sign);
         }
 
-        private void TrimNullNumbers(ref char[] digitsArray)
-        {
-            var firstNumberIndex = digitsArray.ToList().FindIndex(digit => digit != '0');
-            if (firstNumberIndex != -1)
-            {
-                digitsArray = digitsArray.Skip(firstNumberIndex).ToArray();
-            }
-        }
-
+        //TODO return int instead of nullable
+        //TODO in case of not parsed digit throw FormatException
         private int? GetDigit(char digit)
         {
+            //TODO get it throug the dictionary
             var number = 0;
             while (number != 10)
             {
@@ -69,24 +77,13 @@ namespace Task2
 
         private bool IsSign(char value)
         {
-            return value == '-' || value == '+';
+            //TODO change to constands
+            return value == '-' || value == PlusSign;
         }
 
-        private char TrimSign(ref char[] digits)
+        private int ToInt(List<int> parsedDigits, char sign)
         {
-            char sign = default;
-            if (IsSign(digits[0]))
-            {
-                sign = digits[0];
-                digits = digits.Skip(1).ToArray();
-            }
-
-            return sign;
-        }
-
-        private int ToInt(List<char> parsedDigits, char sign)
-        {
-            var number = GetDigit(parsedDigits[0]).Value;
+            var number = parsedDigits[0];
             if (sign == '-')
             {
                 number *= -1;
@@ -97,8 +94,8 @@ namespace Task2
                 checked
                 {
                     number = number > 0
-                        ? number * 10 + GetDigit(parsedDigits[i]).Value
-                        : number * 10 - GetDigit(parsedDigits[i]).Value;
+                        ? number * 10 + parsedDigits[i]
+                        : number * 10 - parsedDigits[i];
                 }
             }
 

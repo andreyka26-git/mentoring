@@ -7,6 +7,7 @@ namespace Task1
     {
         private static string GetFirstLetter(string text)
         {
+            //TODO better to use NullOrWhiteSpace, because we can insert "    " and it will not throw exception
             if (string.IsNullOrEmpty(text))
             {
                 throw new ArgumentException("Input line is empty", nameof(text));
