@@ -8,9 +8,14 @@ namespace LibraryNetwork.Services
 {
     public class LibraryService : ILibraryService
     {
-        private IFileParser _fileParser;
-        private readonly string JsonExtension = ".json";
-        private readonly string XmlExtension = ".xml";
+        private readonly IFileParserFactory _fileParserFactory;
+        private readonly IPathParser _pathParser;
+
+        public LibraryService(IFileParserFactory fileParserFactory, IPathParser pathParser)
+        {
+            _fileParserFactory = fileParserFactory;
+            _pathParser = pathParser;
+        }
 
         public async Task<LibraryEntity> FoundLibraryEntity(string path, string id)
         {
@@ -24,24 +29,19 @@ namespace LibraryNetwork.Services
             var foundPath = string.Empty;
             foreach (var filePath in filesPath)
             {
-                var foundId = await _fileParser.GetLibraryEntityId(filePath);
-                if (foundId != parsedId)
+                var number = _pathParser.GetIdFromFilePath(path);
+                if (number != parsedId)
                     continue;
 
                 foundPath = filePath;
                 break;
             }
 
-            if (!string.IsNullOrEmpty(foundPath))
-            {
-                var fileExtension = Path.GetExtension(foundPath);
-                if (fileExtension == JsonExtension)
-                    //_fileParser = new JsonParser();
-                
-                return await _fileParser.GetLibraryEntity(foundPath);
-            }
-
-            return null;
+            if (string.IsNullOrEmpty(foundPath)) 
+                return null;
+            
+            var parser = _fileParserFactory.CreateFileParser(Path.GetExtension(foundPath));
+            return await parser.GetLibraryEntity(foundPath);
         }
     }
 }

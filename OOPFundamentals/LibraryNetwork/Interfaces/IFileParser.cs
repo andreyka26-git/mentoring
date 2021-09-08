@@ -5,7 +5,6 @@ namespace LibraryNetwork.Interfaces
 {
     public interface IFileParser
     {
-        Task<int> GetLibraryEntityId(string path);
         Task<LibraryEntity> GetLibraryEntity(string path);
     }
 }

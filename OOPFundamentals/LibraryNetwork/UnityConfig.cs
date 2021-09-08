@@ -11,6 +11,8 @@ namespace LibraryNetwork
             var container = new UnityContainer();
             container.RegisterType<ILibraryService, LibraryService>();
             container.RegisterType<IUserInteractable, ConsoleInteraction>();
+            container.RegisterType<IPathParser, PathParser>();
+            container.RegisterType<IFileParserFactory, FileParserFactory>();
             return container;
         }
     }

@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using LibraryNetwork.Interfaces;
 using LibraryNetwork.Models;
 
@@ -6,14 +9,25 @@ namespace LibraryNetwork.Services
 {
     public class XmlParser: IFileParser
     {
-        public Task<int> GetLibraryEntityId(string path)
+        private readonly ILibraryCacheable _cacheService;
+
+        public XmlParser(ILibraryCacheable cacheService)
         {
-            throw new System.NotImplementedException();
+            _cacheService = cacheService;
         }
 
-        public Task<LibraryEntity> GetLibraryEntity(string path)
+        public async Task<LibraryEntity> GetLibraryEntity(string path)
         {
-            throw new System.NotImplementedException();
+            var cacheEntity = _cacheService.GetLibraryEntityFromCache(path);
+            if (cacheEntity != null)
+            {
+                return cacheEntity;
+            }
+
+            var xmlString = await File.ReadAllTextAsync(path);
+            var text = new XmlTextReader(xmlString); 
+            var serializer = new XmlSerializer(typeof(LibraryEntity));
+            return serializer.Deserialize(text) as LibraryEntity;
         }
     }
 }
