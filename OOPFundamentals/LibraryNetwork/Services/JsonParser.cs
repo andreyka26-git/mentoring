@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using LibraryNetwork.Interfaces;
 using LibraryNetwork.Models;
@@ -27,7 +28,8 @@ namespace LibraryNetwork.Services
 
             var jsonString = await File.ReadAllTextAsync(path);
             var stringEntity = _pathParser.GetStringLibraryEntity(path);
-            var jsonObject = JsonConvert.DeserializeObject<LibraryEntity>(jsonString);
+            var type = _pathParser.StringToModelConvert(stringEntity);
+            var jsonObject = JsonConvert.DeserializeObject<Type.GetType(type)>(jsonString);
             _cacheService.AddLibraryEntityToCache(path, jsonObject);
             return jsonObject;
         }
