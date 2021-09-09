@@ -14,7 +14,7 @@ namespace LibraryNetwork.Services
 
         public void PrintLibraryEntity(LibraryEntity entity)
         {
-            Console.WriteLine(entity.EntityToString());
+            Console.WriteLine(entity != null ? entity.EntityToString() : "Id with such entity isn't exist.");
         }
     }
 }

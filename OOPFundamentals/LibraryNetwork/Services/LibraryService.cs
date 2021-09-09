@@ -29,7 +29,7 @@ namespace LibraryNetwork.Services
             var foundPath = string.Empty;
             foreach (var filePath in filesPath)
             {
-                var number = _pathParser.GetIdFromFilePath(path);
+                var number = _pathParser.GetIdFromFilePath(filePath);
                 if (number != parsedId)
                     continue;
 

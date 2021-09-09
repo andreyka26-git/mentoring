@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using LibraryNetwork.Interfaces;
 using LibraryNetwork.Models;
@@ -11,11 +10,13 @@ namespace LibraryNetwork.Services
     {
         private readonly ILibraryCacheable _cacheService;
         private readonly IPathParser _pathParser;
+        private readonly IStringToModelConverter _converter;
 
-        public JsonParser(ILibraryCacheable cacheService, IPathParser pathParser)
+        public JsonParser(ILibraryCacheable cacheService, IPathParser pathParser, IStringToModelConverter converter)
         {
             _cacheService = cacheService;
             _pathParser = pathParser;
+            _converter = converter;
         }
 
         public async Task<LibraryEntity> GetLibraryEntity(string path)
@@ -27,11 +28,12 @@ namespace LibraryNetwork.Services
             }
 
             var jsonString = await File.ReadAllTextAsync(path);
-            var stringEntity = _pathParser.GetStringLibraryEntity(path);
-            var type = _pathParser.StringToModelConvert(stringEntity);
-            var jsonObject = JsonConvert.DeserializeObject<Type.GetType(type)>(jsonString);
-            _cacheService.AddLibraryEntityToCache(path, jsonObject);
-            return jsonObject;
+            var stringEntity = _pathParser.GetStringModelFromFileName(Path.GetFileName(path));
+            var type = _converter.StringToModelConvert(stringEntity);
+            var parsedModel = (LibraryEntity)JsonConvert.DeserializeObject(jsonString, type);
+           
+            _cacheService.AddLibraryEntityToCache(path, parsedModel);
+            return parsedModel;
         }
     }
 }

@@ -7,13 +7,17 @@ using LibraryNetwork.Models;
 
 namespace LibraryNetwork.Services
 {
-    public class XmlParser: IFileParser
+    public class XmlParser : IFileParser
     {
         private readonly ILibraryCacheable _cacheService;
+        private readonly IPathParser _pathParser;
+        private readonly IStringToModelConverter _converter;
 
-        public XmlParser(ILibraryCacheable cacheService)
+        public XmlParser(ILibraryCacheable cacheService, IPathParser pathParser, IStringToModelConverter converter)
         {
             _cacheService = cacheService;
+            _pathParser = pathParser;
+            _converter = converter;
         }
 
         public async Task<LibraryEntity> GetLibraryEntity(string path)
@@ -25,9 +29,20 @@ namespace LibraryNetwork.Services
             }
 
             var xmlString = await File.ReadAllTextAsync(path);
-            var text = new XmlTextReader(xmlString); 
-            var serializer = new XmlSerializer(typeof(LibraryEntity));
-            return serializer.Deserialize(text) as LibraryEntity;
+            var stringEntity = _pathParser.GetStringModelFromFileName(Path.GetFileName(path));
+            var type = _converter.StringToModelConvert(stringEntity);
+
+            LibraryEntity parsedModel;
+            var xRoot = new XmlRootAttribute();
+            xRoot.ElementName = "root";
+            var serializer = new XmlSerializer(type, xRoot);
+            using (var reader = new StringReader(xmlString))
+            {
+                parsedModel = (LibraryEntity)serializer.Deserialize(reader);
+            }
+
+            _cacheService.AddLibraryEntityToCache(path, (LibraryEntity)parsedModel);
+            return (LibraryEntity)parsedModel;
         }
     }
 }
