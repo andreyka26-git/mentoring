@@ -49,7 +49,7 @@ namespace Task1
         )
         {
             return Linq4(customers).OrderBy(s => s.dateOfEntry.Year).ThenBy(s => s.dateOfEntry.Month)
-                .ThenByDescending(c => c.customer.Orders.Length).ThenBy(s => s.customer.CustomerID);
+                .ThenByDescending(c => c.customer.Orders.Sum(a => a.Total)).ThenBy(s => s.customer.CustomerID);
         }
 
         public static IEnumerable<Customer> Linq6(IEnumerable<Customer> customers)
