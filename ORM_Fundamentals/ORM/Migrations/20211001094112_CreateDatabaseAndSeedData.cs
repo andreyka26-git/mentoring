@@ -63,8 +63,8 @@ namespace ORM.Migrations
                 columns: new[] { "Id", "Citations", "Content", "CreatedDateTime" },
                 values: new object[,]
                 {
-                    { 1, 10, "Content1", new DateTime(2021, 10, 1, 12, 20, 59, 236, DateTimeKind.Local).AddTicks(655) },
-                    { 2, 10, "Content2", new DateTime(2021, 10, 1, 12, 20, 59, 236, DateTimeKind.Local).AddTicks(896) }
+                    { 1, 10, "Content1", new DateTime(2011, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, 10, "Content2", new DateTime(2018, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -72,25 +72,25 @@ namespace ORM.Migrations
                 columns: new[] { "Id", "CreatedDateTime", "Name" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2021, 10, 1, 12, 20, 59, 232, DateTimeKind.Local).AddTicks(7885), "Book1" },
-                    { 2, new DateTime(2021, 10, 1, 12, 20, 59, 235, DateTimeKind.Local).AddTicks(8551), "Book2" },
-                    { 3, new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999), "Book3" }
+                    { 1, new DateTime(2001, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), "Book1" },
+                    { 2, new DateTime(1999, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified), "Book2" },
+                    { 3, new DateTime(2006, 7, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "Book3" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Reviews",
                 columns: new[] { "Id", "BookId", "Mark", "ReviewDateTime", "ReviewerName" },
-                values: new object[] { 1, 1, 4, new DateTime(2021, 10, 1, 12, 20, 59, 235, DateTimeKind.Local).AddTicks(9601), "Name1" });
+                values: new object[] { 1, 1, 4, new DateTime(2005, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), "Name1" });
 
             migrationBuilder.InsertData(
                 table: "Reviews",
                 columns: new[] { "Id", "BookId", "Mark", "ReviewDateTime", "ReviewerName" },
-                values: new object[] { 2, 1, 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Name2" });
+                values: new object[] { 2, 1, 2, new DateTime(2012, 10, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), "Name2" });
 
             migrationBuilder.InsertData(
                 table: "Reviews",
                 columns: new[] { "Id", "BookId", "Mark", "ReviewDateTime", "ReviewerName" },
-                values: new object[] { 3, 3, 5, new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999), "Name3" });
+                values: new object[] { 3, 3, 5, new DateTime(2012, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), "Name3" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_BookId",

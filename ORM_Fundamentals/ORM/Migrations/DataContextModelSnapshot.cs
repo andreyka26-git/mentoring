@@ -45,14 +45,14 @@ namespace ORM.Migrations
                             Id = 1,
                             Citations = 10,
                             Content = "Content1",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(9811)
+                            CreatedDateTime = new DateTime(2011, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2,
                             Citations = 10,
                             Content = "Content2",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 193, DateTimeKind.Local).AddTicks(43)
+                            CreatedDateTime = new DateTime(2018, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -81,21 +81,21 @@ namespace ORM.Migrations
                         {
                             Id = 1,
                             Author = "Author1",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 189, DateTimeKind.Local).AddTicks(9486),
+                            CreatedDateTime = new DateTime(2001, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Book1"
                         },
                         new
                         {
                             Id = 2,
                             Author = "Author2",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(7965),
+                            CreatedDateTime = new DateTime(1999, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Book2"
                         },
                         new
                         {
                             Id = 3,
                             Author = "Author2",
-                            CreatedDateTime = new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999),
+                            CreatedDateTime = new DateTime(2006, 7, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Book3"
                         });
                 });
@@ -131,7 +131,7 @@ namespace ORM.Migrations
                             Id = 1,
                             BookId = 1,
                             Mark = 4,
-                            ReviewDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(8837),
+                            ReviewDateTime = new DateTime(2005, 6, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReviewerName = "Name1"
                         },
                         new
@@ -139,7 +139,7 @@ namespace ORM.Migrations
                             Id = 2,
                             BookId = 1,
                             Mark = 2,
-                            ReviewDateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ReviewDateTime = new DateTime(2012, 10, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReviewerName = "Name2"
                         },
                         new
@@ -147,7 +147,7 @@ namespace ORM.Migrations
                             Id = 3,
                             BookId = 3,
                             Mark = 5,
-                            ReviewDateTime = new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999),
+                            ReviewDateTime = new DateTime(2012, 3, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ReviewerName = "Name3"
                         });
                 });
