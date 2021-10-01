@@ -10,8 +10,8 @@ using ORM.Domain;
 namespace ORM.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211001081745_ModifyFieldsForTests")]
-    partial class ModifyFieldsForTests
+    [Migration("20211001092133_AddAuhtorField")]
+    partial class AddAuhtorField
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -47,14 +47,14 @@ namespace ORM.Migrations
                             Id = 1,
                             Citations = 10,
                             Content = "Content1",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 11, 17, 44, 523, DateTimeKind.Local).AddTicks(9918)
+                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(9811)
                         },
                         new
                         {
                             Id = 2,
                             Citations = 10,
                             Content = "Content2",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 11, 17, 44, 524, DateTimeKind.Local).AddTicks(287)
+                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 193, DateTimeKind.Local).AddTicks(43)
                         });
                 });
 
@@ -83,22 +83,22 @@ namespace ORM.Migrations
                         {
                             Id = 1,
                             Author = "Author1",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 11, 17, 44, 519, DateTimeKind.Local).AddTicks(5037),
+                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 189, DateTimeKind.Local).AddTicks(9486),
                             Name = "Book1"
                         },
                         new
                         {
                             Id = 2,
                             Author = "Author2",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 11, 17, 44, 523, DateTimeKind.Local).AddTicks(6917),
-                            Name = "Book1"
+                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(7965),
+                            Name = "Book2"
                         },
                         new
                         {
                             Id = 3,
                             Author = "Author2",
                             CreatedDateTime = new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999),
-                            Name = "Book1"
+                            Name = "Book3"
                         });
                 });
 
@@ -133,7 +133,7 @@ namespace ORM.Migrations
                             Id = 1,
                             BookId = 1,
                             Mark = 4,
-                            ReviewDateTime = new DateTime(2021, 10, 1, 11, 17, 44, 523, DateTimeKind.Local).AddTicks(8341),
+                            ReviewDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(8837),
                             ReviewerName = "Name1"
                         },
                         new

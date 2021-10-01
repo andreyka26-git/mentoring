@@ -45,14 +45,14 @@ namespace ORM.Migrations
                             Id = 1,
                             Citations = 10,
                             Content = "Content1",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 11, 22, 25, 0, DateTimeKind.Local).AddTicks(3455)
+                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(9811)
                         },
                         new
                         {
                             Id = 2,
                             Citations = 10,
                             Content = "Content2",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 11, 22, 25, 0, DateTimeKind.Local).AddTicks(3693)
+                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 193, DateTimeKind.Local).AddTicks(43)
                         });
                 });
 
@@ -81,14 +81,14 @@ namespace ORM.Migrations
                         {
                             Id = 1,
                             Author = "Author1",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 11, 22, 24, 997, DateTimeKind.Local).AddTicks(3971),
+                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 189, DateTimeKind.Local).AddTicks(9486),
                             Name = "Book1"
                         },
                         new
                         {
                             Id = 2,
                             Author = "Author2",
-                            CreatedDateTime = new DateTime(2021, 10, 1, 11, 22, 25, 0, DateTimeKind.Local).AddTicks(1508),
+                            CreatedDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(7965),
                             Name = "Book2"
                         },
                         new
@@ -131,7 +131,7 @@ namespace ORM.Migrations
                             Id = 1,
                             BookId = 1,
                             Mark = 4,
-                            ReviewDateTime = new DateTime(2021, 10, 1, 11, 22, 25, 0, DateTimeKind.Local).AddTicks(2376),
+                            ReviewDateTime = new DateTime(2021, 10, 1, 12, 21, 33, 192, DateTimeKind.Local).AddTicks(8837),
                             ReviewerName = "Name1"
                         },
                         new
