@@ -22,12 +22,11 @@ namespace ORM
             return _context.Books.Where(b => b.Author == authorName);
         }
 
-        public IEnumerable<string> GetBooksAndOrdersByMark(int mark)
+        public IEnumerable<Book> GetBooksOrderByDate()
         {
             using var db = new SqlConnection(Program.Configuration.GetConnectionString("Mentoring"));
-            return db.Query<string>(
-                "SELECT Books.Author FROM Books inner join Reviews on Books.Id = Reviews.BookId WHERE Reviews.Mark = @mark",
-                new {mark});
+            return db.Query<Book>(
+                "SELECT * FROM Books inner join Reviews on Books.Id = Reviews.BookId ORDER BY Reviews.ReviewDateTime");
 
         }
     }

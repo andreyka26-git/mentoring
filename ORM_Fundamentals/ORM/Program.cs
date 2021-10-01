@@ -26,9 +26,9 @@ namespace ORM
 
             Console.WriteLine();
 
-            foreach (var author in service.GetBooksAndOrdersByMark(2))
+            foreach (var book in service.GetBooksOrderByDate())
             {
-                Console.Write(author);
+                Console.WriteLine(book.Name);
             }
         }
     }
