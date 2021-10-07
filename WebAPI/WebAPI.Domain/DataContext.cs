@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebAPI.Domain.Entities;
+using WebAPI.Domain.Aggregates.EmployeeAggregate;
+using WebAPI.Domain.Aggregates.ProjectAggregate;
 
-namespace WebAPI.Domain
+namespace WebAPI.Infrastructure
 {
     public class DataContext : DbContext
     {

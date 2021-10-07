@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using WebAPI.Domain.Aggregates.EmployeeAggregate;
 
-namespace WebAPI.Domain.Entities
+namespace WebAPI.Domain.Aggregates.ProjectAggregate
 {
     public class Project
     {

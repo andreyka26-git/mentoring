@@ -2,26 +2,56 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
-using WebAPI.BusinessLogic.DataTransferObjects;
-using WebAPI.BusinessLogic.Interfaces;
-using WebAPI.Domain.Entities;
-using WebAPI.Domain.Interfaces;
+using WebAPI.Application.DataTransferObjects;
+using WebAPI.Application.Interfaces;
+using WebAPI.Domain.Aggregates.EmployeeAggregate;
+using WebAPI.Domain.Aggregates.ProjectAggregate;
 
-namespace WebAPI.BusinessLogic.Services
+namespace WebAPI.Infrastructure.Services
 {
-    public class MainService : IMainService
+    public class ProjectService : IProjectService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IEmployeeService _employeeService;
-        private readonly IProjectService _projectService;
 
-        public MainService(IUnitOfWork unitOfWork, IMapper mapper, IEmployeeService employeeService, IProjectService projectService)
+        public ProjectService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _employeeService = employeeService;
-            _projectService = projectService;
+        }
+
+        public int CreateProject(ProjectPostDto project)
+        {
+            var entity = _mapper.Map<Project>(project);
+            _unitOfWork.Projects.Create(entity);
+            _unitOfWork.Save();
+            return entity.Id;
+        }
+
+        public void DeleteProject(int id)
+        {
+            _unitOfWork.Projects.Delete(id);
+            _unitOfWork.Save();
+        }
+
+        public IEnumerable<ProjectGetDto> GetAllProjects()
+        {
+            var projects = _unitOfWork.Projects.GetAll();
+            return _mapper.Map<IEnumerable<ProjectGetDto>>(projects);
+        }
+
+        public ProjectGetDto GetProjectById(int id)
+        {
+            var project = _unitOfWork.Projects.Get(id);
+            return project != null ? _mapper.Map<ProjectGetDto>(project) : null;
+        }
+
+        public void UpdateProject(int id, ProjectPostDto project)
+        {
+            var entity = _mapper.Map<Project>(project);
+            entity.Id = id;
+            _unitOfWork.Projects.Update(entity);
+            _unitOfWork.Save();
         }
 
         public bool AssignToProject(int id, string name)
@@ -50,8 +80,8 @@ namespace WebAPI.BusinessLogic.Services
 
             var composition = new ProjectCompositionDto
             {
-                Project = _mapper.Map<ProjectDto>(project),
-                Employees = _mapper.Map<IEnumerable<EmployeeDto>>(project.Employees)
+                Project = _mapper.Map<ProjectPostDto>(project),
+                Employees = _mapper.Map<IEnumerable<EmployeeGetDto>>(project.Employees)
             };
 
             return composition;

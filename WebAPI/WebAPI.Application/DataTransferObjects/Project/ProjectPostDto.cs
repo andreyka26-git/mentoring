@@ -1,6 +1,6 @@
-﻿namespace WebAPI.BusinessLogic.DataTransferObjects
+﻿namespace WebAPI.Application.DataTransferObjects
 {
-    public class ProjectDto
+    public class ProjectPostDto
     {
         public string Name { get; set; }
         public int Duration { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace WebAPI.BusinessLogic.Helpers
+﻿namespace WebAPI.Application.Interfaces
 {
     public class EmployeeFiltering
     {

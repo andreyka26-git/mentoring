@@ -1,8 +1,10 @@
 ﻿using System;
-using WebAPI.Domain.Entities;
-using WebAPI.Domain.Interfaces;
+using WebAPI.Application.Interfaces;
+using WebAPI.Domain.Aggregates;
+using WebAPI.Domain.Aggregates.EmployeeAggregate;
+using WebAPI.Domain.Aggregates.ProjectAggregate;
 
-namespace WebAPI.Domain.Repositories
+namespace WebAPI.Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {

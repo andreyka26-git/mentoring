@@ -5,12 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using WebAPI.BusinessLogic.Helpers;
-using WebAPI.BusinessLogic.Interfaces;
-using WebAPI.BusinessLogic.Services;
-using WebAPI.Domain;
-using WebAPI.Domain.Interfaces;
-using WebAPI.Domain.Repositories;
+using WebAPI.Application.Helpers;
+using WebAPI.Application.Interfaces;
+using WebAPI.Infrastructure;
+using WebAPI.Infrastructure.Repositories;
+using WebAPI.Infrastructure.Services;
 
 namespace WebAPI
 {
@@ -35,7 +34,6 @@ namespace WebAPI
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IProjectService, ProjectService>();
-            services.AddTransient<IMainService, MainService>();
             services.AddAutoMapper(cfg => cfg.AddProfile<MapperProfile>());
         }
 

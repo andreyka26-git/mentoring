@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebAPI.BusinessLogic\WebAPI.BusinessLogic.csproj" />
-    <ProjectReference Include="..\WebAPI.Domain\WebAPI.Domain.csproj" />
+    <ProjectReference Include="..\WebAPI.BusinessLogic\WebAPI.Domain.csproj" />
+    <ProjectReference Include="..\WebAPI.Domain\WebAPI.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

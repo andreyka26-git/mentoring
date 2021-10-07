@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebAPI.Domain.Interfaces
+namespace WebAPI.Domain.Aggregates
 {
     public interface IRepository<T> where T : class
     {

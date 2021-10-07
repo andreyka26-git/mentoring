@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using WebAPI.Domain.Entities;
-using WebAPI.Domain.Interfaces;
+using WebAPI.Domain.Aggregates;
+using WebAPI.Domain.Aggregates.EmployeeAggregate;
 
-namespace WebAPI.Domain.Repositories
+namespace WebAPI.Infrastructure.Repositories
 {
     public class EmployeeRepository: IRepository<Employee>
     {

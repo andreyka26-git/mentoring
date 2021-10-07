@@ -2,13 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using WebAPI.BusinessLogic.DataTransferObjects;
-using WebAPI.BusinessLogic.Helpers;
-using WebAPI.BusinessLogic.Interfaces;
-using WebAPI.Domain.Entities;
-using WebAPI.Domain.Interfaces;
+using WebAPI.Application.DataTransferObjects;
+using WebAPI.Application.Interfaces;
+using WebAPI.Domain.Aggregates.EmployeeAggregate;
 
-namespace WebAPI.BusinessLogic.Services
+namespace WebAPI.Infrastructure.Services
 {
     public class EmployeeService : IEmployeeService
     {
@@ -21,11 +19,12 @@ namespace WebAPI.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public void CreateEmployee(EmployeeDto employee)
+        public int CreateEmployee(EmployeePostDto employee)
         {
             var entity = _mapper.Map<Employee>(employee);
             _unitOfWork.Employees.Create(entity);
             _unitOfWork.Save();
+            return entity.Id;
         }
 
         public void DeleteEmployee(int id)
@@ -34,9 +33,9 @@ namespace WebAPI.BusinessLogic.Services
             _unitOfWork.Save();
         }
 
-        public IEnumerable<EmployeeDto> FilteringAndOrderBy(EmployeeFiltering filter, string orderBy, string fieldOrder)
+        public IEnumerable<EmployeeGetDto> FilteringAndOrderBy(EmployeeFiltering filter, string orderBy, string fieldOrder)
         {
-            var employees =  _mapper.Map<IEnumerable<EmployeeDto>>(_unitOfWork.Employees.GetAll());
+            var employees = _mapper.Map<IEnumerable<EmployeeGetDto>>(_unitOfWork.Employees.GetAll());
 
             if (!string.IsNullOrEmpty(filter.FirstName))
                 employees = employees.Where(e =>
@@ -56,27 +55,19 @@ namespace WebAPI.BusinessLogic.Services
             };
         }
 
-        public IEnumerable<EmployeeDto> GetAllEmployees()
+        public IEnumerable<EmployeeGetDto> GetAllEmployees()
         {
             var employees = _unitOfWork.Employees.GetAll();
-            return _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+            return _mapper.Map<IEnumerable<EmployeeGetDto>>(employees);
         }
 
-        public EmployeeDto GetEmployeeById(int id)
+        public EmployeeGetDto GetEmployeeById(int id)
         {
             var employee = _unitOfWork.Employees.Get(id);
-            return employee != null ? _mapper.Map<EmployeeDto>(employee) : null;
+            return employee != null ? _mapper.Map<EmployeeGetDto>(employee) : null;
         }
 
-        public int? GetEmployeeId(EmployeeDto employee)
-        {
-            return _unitOfWork.Employees.Find(e =>
-                    e.FirstName.Equals(employee.FirstName, StringComparison.CurrentCultureIgnoreCase) &&
-                    e.LastName.Equals(employee.LastName, StringComparison.CurrentCultureIgnoreCase))
-                .FirstOrDefault()?.Id;
-        }
-
-        public void UpdateEmployee(int id, EmployeeDto employee)
+        public void UpdateEmployee(int id, EmployeePostDto employee)
         {
             var entity = _mapper.Map<Employee>(employee);
             entity.Id = id;
@@ -84,7 +75,7 @@ namespace WebAPI.BusinessLogic.Services
             _unitOfWork.Save();
         }
 
-        private static IEnumerable<EmployeeDto> OrderByAscending(IEnumerable<EmployeeDto> employees, string fieldOrder)
+        private static IEnumerable<EmployeeGetDto> OrderByAscending(IEnumerable<EmployeeGetDto> employees, string fieldOrder)
         {
             return fieldOrder switch
             {
@@ -96,7 +87,7 @@ namespace WebAPI.BusinessLogic.Services
             };
         }
 
-        private static IEnumerable<EmployeeDto> OrderByDescending(IEnumerable<EmployeeDto> employees, string fieldOrder)
+        private static IEnumerable<EmployeeGetDto> OrderByDescending(IEnumerable<EmployeeGetDto> employees, string fieldOrder)
         {
             return fieldOrder switch
             {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.BusinessLogic.DataTransferObjects;
-using WebAPI.BusinessLogic.Interfaces;
+using WebAPI.Application.DataTransferObjects;
+using WebAPI.Application.Interfaces;
 
 namespace WebAPI.Controllers
 {
@@ -10,49 +10,39 @@ namespace WebAPI.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService _projectService;
+        private readonly IEmployeeService _employeeService;
 
-        public ProjectController(IProjectService projectService)
+        public ProjectController(IProjectService projectService, IEmployeeService employeeService)
         {
             _projectService = projectService;
+            _employeeService = employeeService;
         }
 
         [HttpGet]
-        public IEnumerable<ProjectDto> GetProjects()
+        public IEnumerable<ProjectGetDto> GetProjects()
         {
             return _projectService.GetAllProjects();
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetEmployeeById(int id)
+        public IActionResult GetProject(int id)
         {
             var project = _projectService.GetProjectById(id);
             return project != null ? Ok(project) : NotFound();
         }
 
-        [HttpGet("Id")]
-        public IActionResult GetProjectId(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-                return BadRequest();
-
-            var project = new ProjectDto { Name = name };
-            var id = _projectService.GetProjectId(project);
-            return id == null ? NotFound() : Ok(id);
-        }
-
         [HttpPost]
-        public IActionResult AddProject([FromBody] ProjectDto project)
+        public IActionResult AddProject([FromBody] ProjectPostDto project)
         {
             if (project == null)
                 return BadRequest();
 
-            _projectService.CreateProject(project);
-            var id = _projectService.GetProjectId(project);
-            return CreatedAtAction(nameof(GetProjectId), new { id }, project);
+            var id = _projectService.CreateProject(project);
+            return CreatedAtAction(nameof(GetProject), new { id }, project);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] ProjectDto project)
+        public IActionResult Update(int id, [FromBody] ProjectPostDto project)
         {
             if (project == null)
                 return BadRequest();
@@ -74,6 +64,44 @@ namespace WebAPI.Controllers
 
             _projectService.DeleteProject(id);
             return new NoContentResult();
+        }
+
+        [HttpPost("assign")]
+        public ActionResult AssignToProject(int id, string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return BadRequest();
+
+            var model = _employeeService.GetEmployeeById(id);
+            if (model == null)
+                return BadRequest();
+
+            var isSuccessful = _projectService.AssignToProject(id, name);
+            return isSuccessful ? Ok() : BadRequest();
+        }
+
+        [HttpPost("unassign")]
+        public ActionResult UnAssignFromProject(int id, string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return BadRequest();
+
+            var model = _employeeService.GetEmployeeById(id);
+            if (model == null)
+                return BadRequest();
+
+            var isSuccessful = _projectService.UnAssignFromProject(id, name);
+            return isSuccessful ? Ok() : BadRequest();
+        }
+
+        [HttpGet("composition")]
+        public ActionResult GetProjectsComposition(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return BadRequest();
+
+            var composition = _projectService.GetProjectComposition(name);
+            return composition != null ? Ok(composition) : NotFound();
         }
     }
 }

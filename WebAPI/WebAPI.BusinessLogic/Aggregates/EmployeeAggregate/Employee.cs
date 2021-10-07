@@ -1,4 +1,6 @@
-﻿namespace WebAPI.Domain.Entities
+﻿using WebAPI.Domain.Aggregates.ProjectAggregate;
+
+namespace WebAPI.Domain.Aggregates.EmployeeAggregate
 {
     public class Employee
     {

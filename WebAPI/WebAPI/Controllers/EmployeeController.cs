@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.BusinessLogic.DataTransferObjects;
-using WebAPI.BusinessLogic.Helpers;
-using WebAPI.BusinessLogic.Interfaces;
+using WebAPI.Application.DataTransferObjects;
+using WebAPI.Application.Interfaces;
 
 namespace WebAPI.Controllers
 {
@@ -18,7 +17,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<EmployeeDto> GetEmployees()
+        public IEnumerable<EmployeeGetDto> GetEmployees()
         {
             return _employeeService.GetAllEmployees();
         }
@@ -30,30 +29,18 @@ namespace WebAPI.Controllers
             return employee != null ? Ok(employee) : NotFound();
         }
 
-        [HttpGet("Id")]
-        public IActionResult GetEmployeeId(string firstName, string lastName)
-        {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
-                return BadRequest();
-
-            var employee = new EmployeeDto { FirstName = firstName, LastName = lastName };
-            var id = _employeeService.GetEmployeeId(employee);
-            return id == null ? NotFound() : Ok(id);
-        }
-
         [HttpPost]
-        public IActionResult AddEmployee([FromBody] EmployeeDto employee)
+        public IActionResult AddEmployee([FromBody] EmployeePostDto employee)
         {
             if (employee == null)
                 return BadRequest();
 
-            _employeeService.CreateEmployee(employee);
-            var id = _employeeService.GetEmployeeId(employee);
+            var id = _employeeService.CreateEmployee(employee);
             return CreatedAtAction(nameof(GetEmployeeById), new { id }, employee);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] EmployeeDto employee)
+        public IActionResult Update(int id, [FromBody] EmployeePostDto employee)
         {
             if (employee == null)
                 return BadRequest();

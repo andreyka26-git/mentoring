@@ -1,7 +1,9 @@
 ﻿using System;
-using WebAPI.Domain.Entities;
+using WebAPI.Domain.Aggregates;
+using WebAPI.Domain.Aggregates.EmployeeAggregate;
+using WebAPI.Domain.Aggregates.ProjectAggregate;
 
-namespace WebAPI.Domain.Interfaces
+namespace WebAPI.Application.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {

@@ -1,6 +1,6 @@
-﻿namespace WebAPI.BusinessLogic.DataTransferObjects
+﻿namespace WebAPI.Application.DataTransferObjects
 {
-    public class EmployeeDto
+    public class EmployeePostDto
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
