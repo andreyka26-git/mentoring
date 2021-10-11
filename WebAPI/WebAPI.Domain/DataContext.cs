@@ -9,5 +9,10 @@ namespace WebAPI.Infrastructure
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DataContext(DbContextOptions<DataContext> context) : base(context) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Employee>().HasOne<Project>().WithMany().HasForeignKey(f => f.ProjectId);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Application.DataTransferObjects;
 using WebAPI.Application.Interfaces;
@@ -19,78 +20,78 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<ProjectGetDto> GetProjects()
+        public async Task<IEnumerable<GetProjectDto>> GetProjectsAsync()
         {
-            return _projectService.GetAllProjects();
+            return await _projectService.GetAllProjectsAsync();
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetProject(int id)
+        public async Task<IActionResult> GetProject(int id)
         {
-            var project = _projectService.GetProjectById(id);
+            var project = await _projectService.GetProjectByIdAsync(id);
             return project != null ? Ok(project) : NotFound();
         }
 
         [HttpPost]
-        public IActionResult AddProject([FromBody] ProjectPostDto project)
+        public async Task<IActionResult> AddProjectAsync([FromBody] PostProjectDto project)
         {
             if (project == null)
                 return BadRequest();
 
-            var id = _projectService.CreateProject(project);
+            var id = await _projectService.CreateProjectAsync(project);
             return CreatedAtAction(nameof(GetProject), new { id }, project);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] ProjectPostDto project)
+        public async Task<IActionResult> Update(int id, [FromBody] PostProjectDto project)
         {
             if (project == null)
                 return BadRequest();
 
-            var model = _projectService.GetProjectById(id);
+            var model = _projectService.GetProjectByIdAsync(id);
             if (model == null)
                 return NotFound();
 
-            _projectService.UpdateProject(id, project);
+            await _projectService.UpdateProjectAsync(id, project);
             return new NoContentResult();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var model = _projectService.GetProjectById(id);
+            var model = await _projectService.GetProjectByIdAsync(id);
             if (model == null)
                 return NotFound();
 
-            _projectService.DeleteProject(id);
+            await _projectService.DeleteProjectAsync(id);
             return new NoContentResult();
         }
 
         [HttpPost("assign")]
-        public ActionResult AssignToProject(int id, string name)
+        public async Task<ActionResult> AssignToProjectAsync(int id, string name)
         {
             if (string.IsNullOrEmpty(name))
                 return BadRequest();
 
-            var model = _employeeService.GetEmployeeById(id);
+            var model = await _employeeService.GetEmployeeByIdAsync(id);
             if (model == null)
                 return BadRequest();
 
-            var isSuccessful = _projectService.AssignToProject(id, name);
+            var isSuccessful = await _projectService.AssignToProjectAsync(id, name);
             return isSuccessful ? Ok() : BadRequest();
         }
 
         [HttpPost("unassign")]
-        public ActionResult UnAssignFromProject(int id, string name)
+        public async Task<ActionResult> UnAssignFromProjectAsync(int id, string name)
         {
             if (string.IsNullOrEmpty(name))
                 return BadRequest();
 
-            var model = _employeeService.GetEmployeeById(id);
+            var model = await _employeeService.GetEmployeeByIdAsync(id);
             if (model == null)
                 return BadRequest();
 
-            var isSuccessful = _projectService.UnAssignFromProject(id, name);
+            var isSuccessful = await _projectService.UnAssignFromProjectAsync(id, name);
             return isSuccessful ? Ok() : BadRequest();
         }
 

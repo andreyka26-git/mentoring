@@ -10,14 +10,15 @@ namespace WebAPI.Application.Helpers
         public MapperProfile()
         {
             // Employee mapping.
-            CreateMap<Employee, EmployeeGetDto>();
-            CreateMap<EmployeeGetDto, Employee>();
-            CreateMap<EmployeePostDto, Employee>();
+            CreateMap<Employee, GetEmployeeDto>();
+            CreateMap<GetEmployeeDto, Employee>();
+            CreateMap<PostEmployeeDto, Employee>();
 
             // Project mapping.
-            CreateMap<Project, ProjectGetDto>();
-            CreateMap<ProjectGetDto, Project>();
-            CreateMap<ProjectPostDto, Project>();
+            CreateMap<Project, GetProjectDto>();
+            CreateMap<GetProjectDto, Project>();
+            CreateMap<PostProjectDto, Project>();
+            CreateMap<Project, PostProjectDto>();
         }
     }
 }

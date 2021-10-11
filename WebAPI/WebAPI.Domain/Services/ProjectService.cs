@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using WebAPI.Application.DataTransferObjects;
 using WebAPI.Application.Interfaces;
-using WebAPI.Domain.Aggregates.EmployeeAggregate;
 using WebAPI.Domain.Aggregates.ProjectAggregate;
 
 namespace WebAPI.Infrastructure.Services
@@ -20,53 +19,52 @@ namespace WebAPI.Infrastructure.Services
             _mapper = mapper;
         }
 
-        public int CreateProject(ProjectPostDto project)
+        public async Task<int> CreateProjectAsync(PostProjectDto project)
         {
             var entity = _mapper.Map<Project>(project);
-            _unitOfWork.Projects.Create(entity);
-            _unitOfWork.Save();
+            await _unitOfWork.Projects.CreateAsync(entity);
+            await _unitOfWork.SaveAsync();
             return entity.Id;
         }
 
-        public void DeleteProject(int id)
+        public async Task DeleteProjectAsync(int id)
         {
-            _unitOfWork.Projects.Delete(id);
-            _unitOfWork.Save();
+            await _unitOfWork.Projects.DeleteAsync(id);
+            await _unitOfWork.SaveAsync();
         }
 
-        public IEnumerable<ProjectGetDto> GetAllProjects()
+        public async Task<IEnumerable<GetProjectDto>> GetAllProjectsAsync()
         {
-            var projects = _unitOfWork.Projects.GetAll();
-            return _mapper.Map<IEnumerable<ProjectGetDto>>(projects);
+            var projects = await _unitOfWork.Projects.GetAllAsync();
+            return _mapper.Map<IEnumerable<GetProjectDto>>(projects);
         }
 
-        public ProjectGetDto GetProjectById(int id)
+        public async Task<GetProjectDto> GetProjectByIdAsync(int id)
         {
-            var project = _unitOfWork.Projects.Get(id);
-            return project != null ? _mapper.Map<ProjectGetDto>(project) : null;
+            var project = await _unitOfWork.Projects.GetAsync(id);
+            return project != null ? _mapper.Map<GetProjectDto>(project) : null;
         }
 
-        public void UpdateProject(int id, ProjectPostDto project)
+        public async Task UpdateProjectAsync(int id, PostProjectDto project)
         {
             var entity = _mapper.Map<Project>(project);
             entity.Id = id;
             _unitOfWork.Projects.Update(entity);
-            _unitOfWork.Save();
+            await _unitOfWork.SaveAsync();
         }
 
-        public bool AssignToProject(int id, string name)
+        public async Task<bool> AssignToProjectAsync(int id, string name)
         {
             var project =
-                _unitOfWork.Projects.Find(p => p.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                _unitOfWork.Projects.Find(name: name).FirstOrDefault();
             if (project == null)
                 return false;
 
-            var employee = _unitOfWork.Employees.Get(id);
-            project.Employees ??= new List<Employee>();
-            project.Employees.Add(employee);
+            var employee = await _unitOfWork.Employees.GetAsync(id);
+            employee.ProjectId = project.Id;
 
-            _unitOfWork.Projects.Update(project);
-            _unitOfWork.Save();
+            _unitOfWork.Employees.Update(employee);
+            await _unitOfWork.SaveAsync();
 
             return true;
         }
@@ -74,33 +72,33 @@ namespace WebAPI.Infrastructure.Services
         public ProjectCompositionDto GetProjectComposition(string name)
         {
             var project =
-                _unitOfWork.Projects.Find(p => p.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                _unitOfWork.Projects.Find(name: name)
+                    .FirstOrDefault();
             if (project == null)
                 return null;
 
             var composition = new ProjectCompositionDto
             {
-                Project = _mapper.Map<ProjectPostDto>(project),
-                Employees = _mapper.Map<IEnumerable<EmployeeGetDto>>(project.Employees)
+                Project = _mapper.Map<PostProjectDto>(project),
+                Employees = _mapper.Map<IEnumerable<GetEmployeeDto>>(_unitOfWork.Employees.Find(projectId: project.Id))
             };
 
             return composition;
         }
 
-        public bool UnAssignFromProject(int id, string name)
+        public async Task<bool> UnAssignFromProjectAsync(int id, string name)
         {
             var project =
-                _unitOfWork.Projects.Find(p => p.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-            if (project?.Employees == null)
+                _unitOfWork.Projects.Find(name: name).FirstOrDefault();
+            if (project == null)
                 return false;
 
-            var employee = _unitOfWork.Employees.Get(id);
-            project.Employees.RemoveAll(s => s.Id == employee.Id);
+            var employee = await _unitOfWork.Employees.GetAsync(id);
+            employee.ProjectId = null;
 
-            _unitOfWork.Projects.Update(project);
-            _unitOfWork.Save();
+            _unitOfWork.Employees.Update(employee);
+            await _unitOfWork.SaveAsync();
             return true;
-
         }
     }
 }

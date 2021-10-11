@@ -1,8 +1,7 @@
 ﻿namespace WebAPI.Application.DataTransferObjects
 {
-    public class ProjectGetDto
+    public class PostProjectDto
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public int Duration { get; set; }
     }

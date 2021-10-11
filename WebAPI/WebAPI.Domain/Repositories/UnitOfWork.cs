@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
 using WebAPI.Application.Interfaces;
-using WebAPI.Domain.Aggregates;
 using WebAPI.Domain.Aggregates.EmployeeAggregate;
 using WebAPI.Domain.Aggregates.ProjectAggregate;
 
@@ -9,8 +9,8 @@ namespace WebAPI.Infrastructure.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DataContext _context;
-        private IRepository<Employee> _employeeRepository;
-        private IRepository<Project> _projectRepository;
+        private IEmployeeRepository _employeeRepository;
+        private IProjectRepository _projectRepository;
         private bool _disposed;
 
         public UnitOfWork(DataContext context)
@@ -18,12 +18,12 @@ namespace WebAPI.Infrastructure.Repositories
             _context = context;
         }
 
-        public IRepository<Employee> Employees => _employeeRepository ??= new EmployeeRepository(_context);
-        public IRepository<Project> Projects => _projectRepository ??= new ProjectRepository(_context);
+        public IEmployeeRepository Employees => _employeeRepository ??= new EmployeeRepository(_context);
+        public IProjectRepository Projects => _projectRepository ??= new ProjectRepository(_context);
 
-        public void Save()
+        public async Task SaveAsync()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         public void Dispose()

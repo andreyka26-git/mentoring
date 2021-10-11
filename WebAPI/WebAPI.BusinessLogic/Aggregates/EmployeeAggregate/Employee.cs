@@ -1,6 +1,4 @@
-﻿using WebAPI.Domain.Aggregates.ProjectAggregate;
-
-namespace WebAPI.Domain.Aggregates.EmployeeAggregate
+﻿namespace WebAPI.Domain.Aggregates.EmployeeAggregate
 {
     public class Employee
     {
@@ -9,6 +7,5 @@ namespace WebAPI.Domain.Aggregates.EmployeeAggregate
         public string LastName { get; set; }
         public bool IsHigherEducation { get; set; }
         public int? ProjectId { get; set; }
-        public virtual Project Project { get; set; }
     }
 }

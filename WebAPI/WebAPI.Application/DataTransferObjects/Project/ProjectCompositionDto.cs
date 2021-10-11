@@ -4,7 +4,7 @@ namespace WebAPI.Application.DataTransferObjects
 {
     public class ProjectCompositionDto
     {
-        public ProjectPostDto Project { get; set; }
-        public IEnumerable<EmployeeGetDto> Employees { get; set; }
+        public PostProjectDto Project { get; set; }
+        public IEnumerable<GetEmployeeDto> Employees { get; set; }
     }
 }

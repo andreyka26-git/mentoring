@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using WebAPI.Application.DataTransferObjects;
 using WebAPI.Application.Interfaces;
 using WebAPI.Domain.Aggregates.EmployeeAggregate;
@@ -19,23 +20,23 @@ namespace WebAPI.Infrastructure.Services
             _mapper = mapper;
         }
 
-        public int CreateEmployee(EmployeePostDto employee)
+        public async Task<int> CreateEmployeeAsync(PostEmployeeDto employee)
         {
             var entity = _mapper.Map<Employee>(employee);
-            _unitOfWork.Employees.Create(entity);
-            _unitOfWork.Save();
+            await _unitOfWork.Employees.CreateAsync(entity);
+            await _unitOfWork.SaveAsync();
             return entity.Id;
         }
 
-        public void DeleteEmployee(int id)
+        public async Task DeleteEmployeeAsync(int id)
         {
-            _unitOfWork.Employees.Delete(id);
-            _unitOfWork.Save();
+            await _unitOfWork.Employees.DeleteAsync(id);
+            await _unitOfWork.SaveAsync();
         }
 
-        public IEnumerable<EmployeeGetDto> FilteringAndOrderBy(EmployeeFiltering filter, string orderBy, string fieldOrder)
+        public async Task<IEnumerable<GetEmployeeDto>> FilteringAndOrderByAsync(EmployeeFiltering filter, string orderBy, string fieldOrder)
         {
-            var employees = _mapper.Map<IEnumerable<EmployeeGetDto>>(_unitOfWork.Employees.GetAll());
+            var employees = _mapper.Map<IEnumerable<GetEmployeeDto>>(await _unitOfWork.Employees.GetAllAsync());
 
             if (!string.IsNullOrEmpty(filter.FirstName))
                 employees = employees.Where(e =>
@@ -49,33 +50,33 @@ namespace WebAPI.Infrastructure.Services
 
             return orderBy switch
             {
-                OrderingConstants.AscendingOrder => employees = OrderByAscending(employees, fieldOrder),
-                OrderingConstants.DescendingOrder => employees = OrderByDescending(employees, fieldOrder),
+                OrderingConstants.AscendingOrder => OrderByAscending(employees, fieldOrder),
+                OrderingConstants.DescendingOrder => OrderByDescending(employees, fieldOrder),
                 _ => employees
             };
         }
 
-        public IEnumerable<EmployeeGetDto> GetAllEmployees()
+        public async Task<IEnumerable<GetEmployeeDto>> GetAllEmployeesAsync()
         {
-            var employees = _unitOfWork.Employees.GetAll();
-            return _mapper.Map<IEnumerable<EmployeeGetDto>>(employees);
+            var employees = await _unitOfWork.Employees.GetAllAsync();
+            return _mapper.Map<IEnumerable<GetEmployeeDto>>(employees);
         }
 
-        public EmployeeGetDto GetEmployeeById(int id)
+        public async Task<GetEmployeeDto> GetEmployeeByIdAsync(int id)
         {
-            var employee = _unitOfWork.Employees.Get(id);
-            return employee != null ? _mapper.Map<EmployeeGetDto>(employee) : null;
+            var employee = await _unitOfWork.Employees.GetAsync(id);
+            return employee != null ? _mapper.Map<GetEmployeeDto>(employee) : null;
         }
 
-        public void UpdateEmployee(int id, EmployeePostDto employee)
+        public async Task UpdateEmployeeAsync(int id, PostEmployeeDto employee)
         {
             var entity = _mapper.Map<Employee>(employee);
             entity.Id = id;
             _unitOfWork.Employees.Update(entity);
-            _unitOfWork.Save();
+            await _unitOfWork.SaveAsync();
         }
 
-        private static IEnumerable<EmployeeGetDto> OrderByAscending(IEnumerable<EmployeeGetDto> employees, string fieldOrder)
+        private static IEnumerable<GetEmployeeDto> OrderByAscending(IEnumerable<GetEmployeeDto> employees, string fieldOrder)
         {
             return fieldOrder switch
             {
@@ -87,7 +88,7 @@ namespace WebAPI.Infrastructure.Services
             };
         }
 
-        private static IEnumerable<EmployeeGetDto> OrderByDescending(IEnumerable<EmployeeGetDto> employees, string fieldOrder)
+        private static IEnumerable<GetEmployeeDto> OrderByDescending(IEnumerable<GetEmployeeDto> employees, string fieldOrder)
         {
             return fieldOrder switch
             {

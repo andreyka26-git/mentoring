@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WebAPI.Domain.Aggregates;
 using WebAPI.Domain.Aggregates.ProjectAggregate;
 
 namespace WebAPI.Infrastructure.Repositories
 {
-    public class ProjectRepository : IRepository<Project>
+    public class ProjectRepository : IProjectRepository
     {
         private readonly DataContext _db;
 
@@ -16,24 +15,33 @@ namespace WebAPI.Infrastructure.Repositories
             _db = db;
         }
 
-        public IEnumerable<Project> GetAll()
+        public async Task<IEnumerable<Project>> GetAllAsync()
         {
-            return _db.Projects.AsNoTracking();
+            return await _db.Projects.AsNoTracking().ToListAsync();
         }
 
-        public Project Get(int id)
+        public async Task<Project> GetAsync(int id)
         {
-            return _db.Projects.AsNoTracking().FirstOrDefault(p => p.Id == id);
+            return await _db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public IEnumerable<Project> Find(Func<Project, bool> predicate)
+        public IQueryable<Project> Find(int? id, string name, int? duration)
         {
-            return _db.Projects.Where(predicate);
+            IQueryable<Project> result = _db.Projects;
+
+            if (!string.IsNullOrEmpty(name))
+                result = result.Where(p => p.Name == name);
+            if (duration.HasValue)
+                result = result.Where(p => p.Duration == duration.Value);
+            if (id.HasValue)
+                result = result.Where(p => p.Id == id.Value);
+
+            return result;
         }
 
-        public void Create(Project item)
+        public async Task CreateAsync(Project item)
         {
-            _db.Projects.Add(item);
+            await _db.Projects.AddAsync(item);
         }
 
         public void Update(Project item)
@@ -41,9 +49,9 @@ namespace WebAPI.Infrastructure.Repositories
             _db.Entry(item).State = EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
-            var project = _db.Projects.Find(id);
+            var project = await _db.Projects.FindAsync(id);
             if (project != null)
                 _db.Projects.Remove(project);
         }

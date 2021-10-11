@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Application.DataTransferObjects;
 using WebAPI.Application.Interfaces;
@@ -17,57 +18,57 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<EmployeeGetDto> GetEmployees()
+        public async Task<IEnumerable<GetEmployeeDto>> GetEmployeesAsync()
         {
-            return _employeeService.GetAllEmployees();
+            return await _employeeService.GetAllEmployeesAsync();
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetEmployeeById(int id)
+        public async Task<IActionResult> GetEmployeeById(int id)
         {
-            var employee = _employeeService.GetEmployeeById(id);
+            var employee = await _employeeService.GetEmployeeByIdAsync(id);
             return employee != null ? Ok(employee) : NotFound();
         }
 
         [HttpPost]
-        public IActionResult AddEmployee([FromBody] EmployeePostDto employee)
+        public async Task<IActionResult> AddEmployeeAsync([FromBody] PostEmployeeDto employee)
         {
             if (employee == null)
                 return BadRequest();
 
-            var id = _employeeService.CreateEmployee(employee);
-            return CreatedAtAction(nameof(GetEmployeeById), new { id }, employee);
+            var id = await _employeeService.CreateEmployeeAsync(employee);
+            return CreatedAtAction(nameof(GetEmployeeById),  new { id }, employee);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] EmployeePostDto employee)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] PostEmployeeDto employee)
         {
             if (employee == null)
                 return BadRequest();
 
-            var model = _employeeService.GetEmployeeById(id);
+            var model = await _employeeService.GetEmployeeByIdAsync(id);
             if (model == null)
                 return NotFound();
 
-            _employeeService.UpdateEmployee(id, employee);
+            await _employeeService.UpdateEmployeeAsync(id, employee);
             return new NoContentResult();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var model = _employeeService.GetEmployeeById(id);
+            var model = await _employeeService.GetEmployeeByIdAsync(id);
             if (model == null)
                 return NotFound();
 
-            _employeeService.DeleteEmployee(id);
+            await _employeeService.DeleteEmployeeAsync(id);
             return new NoContentResult();
         }
 
-        [HttpGet("filter")]
-        public IActionResult GetEmployees([FromQuery] EmployeeFiltering filtering, string orderBy = OrderingConstants.AscendingOrder, string fieldOrder = FieldsOrderBy.None)
+        [HttpGet("employees")]
+        public async Task<IActionResult> GetEmployees([FromQuery] EmployeeFiltering filtering, string orderBy = OrderingConstants.AscendingOrder, string fieldOrder = FieldsOrderBy.None)
         {
-            return filtering != null ? Ok(_employeeService.FilteringAndOrderBy(filtering, orderBy, fieldOrder)) : BadRequest();
+            return filtering != null ? Ok(await _employeeService.FilteringAndOrderByAsync(filtering, orderBy, fieldOrder)) : BadRequest();
         }
     }
 }
