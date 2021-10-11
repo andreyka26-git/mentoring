@@ -31,6 +31,8 @@ namespace WebAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EPAM", Version = "v1" });
             });
             services.AddDbContext<DataContext>(op => op.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("Mentoring")));
+
+            //change to scoped.
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient<IEmployeeService, EmployeeService>();
             services.AddTransient<IProjectService, ProjectService>();

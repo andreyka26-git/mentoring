@@ -6,6 +6,7 @@ using WebAPI.Application.Interfaces;
 
 namespace WebAPI.Controllers
 {
+    //TODO the same as for employee controller
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectController : ControllerBase

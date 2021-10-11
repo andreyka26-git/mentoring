@@ -6,6 +6,7 @@ using WebAPI.Domain.Aggregates.ProjectAggregate;
 
 namespace WebAPI.Infrastructure.Repositories
 {
+    //TODO do the same as for employee repo
     public class ProjectRepository : IProjectRepository
     {
         private readonly DataContext _db;

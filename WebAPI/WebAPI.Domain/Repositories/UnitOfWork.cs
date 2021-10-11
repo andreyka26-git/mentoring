@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using WebAPI.Application.Interfaces;
 using WebAPI.Domain.Aggregates.EmployeeAggregate;
@@ -17,13 +18,13 @@ namespace WebAPI.Infrastructure.Repositories
         {
             _context = context;
         }
-
+        //change to DI
         public IEmployeeRepository Employees => _employeeRepository ??= new EmployeeRepository(_context);
         public IProjectRepository Projects => _projectRepository ??= new ProjectRepository(_context);
 
-        public async Task SaveAsync()
+        public async Task SaveAsync(CancellationToken cancellationToken)
         {
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         public void Dispose()

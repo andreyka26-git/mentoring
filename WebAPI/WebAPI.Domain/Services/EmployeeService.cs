@@ -34,6 +34,7 @@ namespace WebAPI.Infrastructure.Services
             await _unitOfWork.SaveAsync();
         }
 
+        //TODO - do filtering and ordering in employeeRepository
         public async Task<IEnumerable<GetEmployeeDto>> FilteringAndOrderByAsync(EmployeeFiltering filter, string orderBy, string fieldOrder)
         {
             var employees = _mapper.Map<IEnumerable<GetEmployeeDto>>(await _unitOfWork.Employees.GetAllAsync());
@@ -76,6 +77,7 @@ namespace WebAPI.Infrastructure.Services
             await _unitOfWork.SaveAsync();
         }
 
+        //TODO drop or move to repo
         private static IEnumerable<GetEmployeeDto> OrderByAscending(IEnumerable<GetEmployeeDto> employees, string fieldOrder)
         {
             return fieldOrder switch
@@ -88,6 +90,7 @@ namespace WebAPI.Infrastructure.Services
             };
         }
 
+        //TODO drop or move to repo
         private static IEnumerable<GetEmployeeDto> OrderByDescending(IEnumerable<GetEmployeeDto> employees, string fieldOrder)
         {
             return fieldOrder switch

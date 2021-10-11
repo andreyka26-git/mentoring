@@ -6,7 +6,14 @@ using WebAPI.Application.Interfaces;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    //TODO change to explicit "api/employees"
+
+    //TODO change order by to be ID ASC by default in whole project
+
+    //TODO if you have one line statement with Task return type - don't use await
+
+    //TODO add cancellationToken whenever possible
+    [Route("api/[controller]")] 
     [ApiController]
     public class EmployeeController : ControllerBase
     {
@@ -17,12 +24,6 @@ namespace WebAPI.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<GetEmployeeDto>> GetEmployeesAsync()
-        {
-            return await _employeeService.GetAllEmployeesAsync();
-        }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEmployeeById(int id)
         {
@@ -31,7 +32,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEmployeeAsync([FromBody] PostEmployeeDto employee)
+        public async Task<IActionResult> AddEmployeeAsync([FromBody] PostEmployeeDto employee, CancellationToken cancellationToken)
         {
             if (employee == null)
                 return BadRequest();
@@ -65,9 +66,19 @@ namespace WebAPI.Controllers
             return new NoContentResult();
         }
 
+        //TODO implement paging
+        //int page / int limit
+        //dbSet.Skip().Take();
+        //
+        //
+        //
+        //
+
+        //TODO drop name from here
         [HttpGet("employees")]
         public async Task<IActionResult> GetEmployees([FromQuery] EmployeeFiltering filtering, string orderBy = OrderingConstants.AscendingOrder, string fieldOrder = FieldsOrderBy.None)
         {
+            //TODO you don't need that if
             return filtering != null ? Ok(await _employeeService.FilteringAndOrderByAsync(filtering, orderBy, fieldOrder)) : BadRequest();
         }
     }

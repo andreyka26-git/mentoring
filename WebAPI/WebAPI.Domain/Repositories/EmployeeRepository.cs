@@ -15,9 +15,11 @@ namespace WebAPI.Infrastructure.Repositories
             _db = db;
         }
 
-        public async Task<IEnumerable<Employee>> GetAllAsync()
+        //TODO drop
+        public Task<IEnumerable<Employee>> GetAllAsync()
         {
-            return await _db.Employees.AsNoTracking().ToListAsync();
+            //change to not using await
+            return _db.Employees.AsNoTracking().ToListAsync();
         }
 
         public async Task<Employee> GetAsync(int id)
@@ -25,6 +27,7 @@ namespace WebAPI.Infrastructure.Repositories
             return await _db.Employees.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        //TODO return list here
         public IQueryable<Employee> Find(int? id, int? projectId, string fName, string lName, bool? isHigherEducation)
         {
             IQueryable<Employee> result = _db.Employees;
