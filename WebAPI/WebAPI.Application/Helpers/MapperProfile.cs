@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using WebAPI.Application.DataTransferObjects;
+using WebAPI.Application.DataTransferObjects.Employee;
+using WebAPI.Application.DataTransferObjects.Project;
 using WebAPI.Domain.Aggregates.EmployeeAggregate;
 using WebAPI.Domain.Aggregates.ProjectAggregate;
 

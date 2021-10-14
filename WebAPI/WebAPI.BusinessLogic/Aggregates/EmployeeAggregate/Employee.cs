@@ -1,7 +1,5 @@
 ﻿namespace WebAPI.Domain.Aggregates.EmployeeAggregate
 {
-    //use private setters 
-    //and constructor if needed
     public class Employee
     {
         public int Id { get; set; }

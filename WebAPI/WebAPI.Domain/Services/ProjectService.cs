@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using WebAPI.Application.DataTransferObjects;
+using WebAPI.Application.DataTransferObjects.Employee;
+using WebAPI.Application.DataTransferObjects.Project;
 using WebAPI.Application.Interfaces;
 using WebAPI.Domain.Aggregates.ProjectAggregate;
 
@@ -19,52 +21,52 @@ namespace WebAPI.Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<int> CreateProjectAsync(PostProjectDto project)
+        public async Task<int> CreateProjectAsync(PostProjectDto project, CancellationToken token)
         {
             var entity = _mapper.Map<Project>(project);
-            await _unitOfWork.Projects.CreateAsync(entity);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.Projects.CreateAsync(entity, token);
+            await _unitOfWork.SaveAsync(token);
             return entity.Id;
         }
 
-        public async Task DeleteProjectAsync(int id)
+        public async Task DeleteProjectAsync(int id, CancellationToken token)
         {
-            await _unitOfWork.Projects.DeleteAsync(id);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.Projects.DeleteAsync(id, token);
+            await _unitOfWork.SaveAsync(token);
         }
 
-        public async Task<IEnumerable<GetProjectDto>> GetAllProjectsAsync()
+        public async Task<IEnumerable<GetProjectDto>> GetAllProjectsAsync(CancellationToken token)
         {
-            var projects = await _unitOfWork.Projects.GetAllAsync();
+            var projects = await _unitOfWork.Projects.GetAllAsync(token);
             return _mapper.Map<IEnumerable<GetProjectDto>>(projects);
         }
 
-        public async Task<GetProjectDto> GetProjectByIdAsync(int id)
+        public async Task<GetProjectDto> GetProjectByIdAsync(int id, CancellationToken token)
         {
-            var project = await _unitOfWork.Projects.GetAsync(id);
+            var project = await _unitOfWork.Projects.GetAsync(id, token);
             return project != null ? _mapper.Map<GetProjectDto>(project) : null;
         }
 
-        public async Task UpdateProjectAsync(int id, PostProjectDto project)
+        public async Task UpdateProjectAsync(int id, PostProjectDto project, CancellationToken token)
         {
             var entity = _mapper.Map<Project>(project);
             entity.Id = id;
             _unitOfWork.Projects.Update(entity);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync(token);
         }
 
-        public async Task<bool> AssignToProjectAsync(int id, string name)
+        public async Task<bool> AssignToProjectAsync(int id, string name, CancellationToken token)
         {
             var project =
                 _unitOfWork.Projects.Find(name: name).FirstOrDefault();
             if (project == null)
                 return false;
 
-            var employee = await _unitOfWork.Employees.GetAsync(id);
+            var employee = await _unitOfWork.Employees.GetAsync(id, token);
             employee.ProjectId = project.Id;
 
             _unitOfWork.Employees.Update(employee);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync(token);
 
             return true;
         }
@@ -86,18 +88,18 @@ namespace WebAPI.Infrastructure.Services
             return composition;
         }
 
-        public async Task<bool> UnAssignFromProjectAsync(int id, string name)
+        public async Task<bool> UnAssignFromProjectAsync(int id, string name, CancellationToken token)
         {
             var project =
                 _unitOfWork.Projects.Find(name: name).FirstOrDefault();
             if (project == null)
                 return false;
 
-            var employee = await _unitOfWork.Employees.GetAsync(id);
+            var employee = await _unitOfWork.Employees.GetAsync(id, token);
             employee.ProjectId = null;
 
             _unitOfWork.Employees.Update(employee);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.SaveAsync(token);
             return true;
         }
     }

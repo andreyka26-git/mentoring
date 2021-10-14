@@ -1,4 +1,4 @@
-﻿namespace WebAPI.Application.DataTransferObjects
+﻿namespace WebAPI.Application.DataTransferObjects.Project
 {
     public class GetProjectDto
     {

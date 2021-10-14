@@ -7,6 +7,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using WebAPI.Application.Helpers;
 using WebAPI.Application.Interfaces;
+using WebAPI.Domain.Aggregates.EmployeeAggregate;
+using WebAPI.Domain.Aggregates.ProjectAggregate;
 using WebAPI.Infrastructure;
 using WebAPI.Infrastructure.Repositories;
 using WebAPI.Infrastructure.Services;
@@ -30,12 +32,13 @@ namespace WebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EPAM", Version = "v1" });
             });
-            services.AddDbContext<DataContext>(op => op.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("Mentoring")));
+            services.AddDbContext<DataContext>(op => op.UseSqlServer(Configuration.GetConnectionString("Mentoring")));
 
-            //change to scoped.
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddTransient<IEmployeeService, EmployeeService>();
-            services.AddTransient<IProjectService, ProjectService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddAutoMapper(cfg => cfg.AddProfile<MapperProfile>());
         }
 

@@ -1,4 +1,4 @@
-﻿namespace WebAPI.Application.Interfaces
+﻿namespace WebAPI.Domain.Aggregates.Common
 {
     public static class OrderingConstants
     {

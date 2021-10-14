@@ -10,17 +10,16 @@ namespace WebAPI.Infrastructure.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DataContext _context;
-        private IEmployeeRepository _employeeRepository;
-        private IProjectRepository _projectRepository;
         private bool _disposed;
+        public IEmployeeRepository Employees { get; }
+        public IProjectRepository Projects { get; }
 
-        public UnitOfWork(DataContext context)
+        public UnitOfWork(DataContext context, IEmployeeRepository employeeRepository, IProjectRepository projectRepository)
         {
             _context = context;
+            Employees = employeeRepository;
+            Projects = projectRepository;
         }
-        //change to DI
-        public IEmployeeRepository Employees => _employeeRepository ??= new EmployeeRepository(_context);
-        public IProjectRepository Projects => _projectRepository ??= new ProjectRepository(_context);
 
         public async Task SaveAsync(CancellationToken cancellationToken)
         {

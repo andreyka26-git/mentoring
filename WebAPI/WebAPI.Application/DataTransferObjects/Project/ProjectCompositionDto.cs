@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using WebAPI.Application.DataTransferObjects.Employee;
 
-namespace WebAPI.Application.DataTransferObjects
+namespace WebAPI.Application.DataTransferObjects.Project
 {
     public class ProjectCompositionDto
     {

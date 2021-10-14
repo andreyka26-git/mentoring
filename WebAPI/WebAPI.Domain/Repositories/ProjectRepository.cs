@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Domain.Aggregates.ProjectAggregate;
 
 namespace WebAPI.Infrastructure.Repositories
 {
-    //TODO do the same as for employee repo
     public class ProjectRepository : IProjectRepository
     {
         private readonly DataContext _db;
@@ -16,19 +16,19 @@ namespace WebAPI.Infrastructure.Repositories
             _db = db;
         }
 
-        public async Task<IEnumerable<Project>> GetAllAsync()
+        public Task<List<Project>> GetAllAsync(CancellationToken token)
         {
-            return await _db.Projects.AsNoTracking().ToListAsync();
+            return _db.Projects.AsNoTracking().ToListAsync(token);
         }
 
-        public async Task<Project> GetAsync(int id)
+        public Task<Project> GetAsync(int id, CancellationToken token)
         {
-            return await _db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
+            return _db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, token);
         }
 
-        public IQueryable<Project> Find(int? id, string name, int? duration)
+        public IEnumerable<Project> Find(int? id, string name, int? duration)
         {
-            IQueryable<Project> result = _db.Projects;
+            IEnumerable<Project> result = _db.Projects;
 
             if (!string.IsNullOrEmpty(name))
                 result = result.Where(p => p.Name == name);
@@ -40,9 +40,9 @@ namespace WebAPI.Infrastructure.Repositories
             return result;
         }
 
-        public async Task CreateAsync(Project item)
+        public async Task CreateAsync(Project item, CancellationToken token)
         {
-            await _db.Projects.AddAsync(item);
+            await _db.Projects.AddAsync(item, token);
         }
 
         public void Update(Project item)
@@ -50,9 +50,9 @@ namespace WebAPI.Infrastructure.Repositories
             _db.Entry(item).State = EntityState.Modified;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, CancellationToken token)
         {
-            var project = await _db.Projects.FindAsync(id);
+            var project = await _db.Projects.FindAsync(id, token);
             if (project != null)
                 _db.Projects.Remove(project);
         }
