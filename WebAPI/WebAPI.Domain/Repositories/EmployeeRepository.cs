@@ -18,11 +18,11 @@ namespace WebAPI.Infrastructure.Repositories
             _db = db;
         }
 
-        public async Task<IEnumerable<Employee>> GetAllAsync(CancellationToken token, EmployeeFiltering filter, string orderBy, string fieldOrder)
+        public Task<List<Employee>> GetAllAsync(CancellationToken token, EmployeeFiltering filter, string orderBy, string fieldOrder)
         {
-            IEnumerable<Employee> employees = await _db.Employees
+            var employees =  _db.Employees
                 .Skip((filter.PagingModel.PageNumber - 1) * filter.PagingModel.PageSize)
-                .Take(filter.PagingModel.PageSize).ToListAsync(token);
+                .Take(filter.PagingModel.PageSize);
 
             if (!string.IsNullOrEmpty(filter.FirstName))
                 employees = employees.Where(e =>
@@ -35,12 +35,14 @@ namespace WebAPI.Infrastructure.Repositories
             if (filter.IsHigherEducation.HasValue)
                 employees = employees.Where(p => p.IsHigherEducation == filter.IsHigherEducation.Value);
 
-            return orderBy switch
+            employees = orderBy switch
             {
                 OrderingConstants.AscendingOrder => OrderByAscending(employees, fieldOrder),
                 OrderingConstants.DescendingOrder => OrderByDescending(employees, fieldOrder),
                 _ => OrderByAscending(employees, fieldOrder)
             };
+
+            return employees.ToListAsync(token);
         }
 
         public Task<Employee> GetAsync(int id, CancellationToken token)
@@ -48,9 +50,9 @@ namespace WebAPI.Infrastructure.Repositories
             return _db.Employees.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, token);
         }
 
-        public IEnumerable<Employee> Find(int? id, int? projectId, string fName, string lName, bool? isHigherEducation)
+        public Task<List<Employee>> FindAsync(CancellationToken token, int? id, int? projectId, string fName, string lName, bool? isHigherEducation)
         {
-            IEnumerable<Employee> result = _db.Employees;
+            var result = _db.Employees.AsQueryable();
 
             if (!string.IsNullOrEmpty(fName))
                 result = result.Where(e => e.FirstName == fName);
@@ -63,7 +65,7 @@ namespace WebAPI.Infrastructure.Repositories
             if (projectId.HasValue)
                 result = result.Where(e => e.ProjectId == projectId);
 
-            return result;
+            return result.ToListAsync(token);
         }
 
         public async Task CreateAsync(Employee item, CancellationToken token)
@@ -83,7 +85,7 @@ namespace WebAPI.Infrastructure.Repositories
                 _db.Employees.Remove(employee);
         }
 
-        private static IEnumerable<Employee> OrderByAscending(IEnumerable<Employee> employees, string fieldOrder)
+        private static IQueryable<Employee> OrderByAscending(IQueryable<Employee> employees, string fieldOrder)
         {
             return fieldOrder switch
             {
@@ -94,7 +96,7 @@ namespace WebAPI.Infrastructure.Repositories
             };
         }
 
-        private static IEnumerable<Employee> OrderByDescending(IEnumerable<Employee> employees, string fieldOrder)
+        private static IQueryable<Employee> OrderByDescending(IQueryable<Employee> employees, string fieldOrder)
         {
             return fieldOrder switch
             {

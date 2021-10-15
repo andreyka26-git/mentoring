@@ -26,9 +26,9 @@ namespace WebAPI.Infrastructure.Repositories
             return _db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, token);
         }
 
-        public IEnumerable<Project> Find(int? id, string name, int? duration)
+        public Task<List<Project>> FindAsync(CancellationToken token, int? id, string name, int? duration)
         {
-            IEnumerable<Project> result = _db.Projects;
+            var result = _db.Projects.AsQueryable();
 
             if (!string.IsNullOrEmpty(name))
                 result = result.Where(p => p.Name == name);
@@ -37,7 +37,7 @@ namespace WebAPI.Infrastructure.Repositories
             if (id.HasValue)
                 result = result.Where(p => p.Id == id.Value);
 
-            return result;
+            return result.ToListAsync(token);
         }
 
         public async Task CreateAsync(Project item, CancellationToken token)

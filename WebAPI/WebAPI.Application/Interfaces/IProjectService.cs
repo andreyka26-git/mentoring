@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using WebAPI.Application.DataTransferObjects;
 using WebAPI.Application.DataTransferObjects.Project;
 
 namespace WebAPI.Application.Interfaces
@@ -15,6 +14,6 @@ namespace WebAPI.Application.Interfaces
         Task DeleteProjectAsync(int id, CancellationToken cancellationToken);
         Task<bool> AssignToProjectAsync(int id, string name, CancellationToken cancellationToken);
         Task<bool> UnAssignFromProjectAsync(int id, string name, CancellationToken cancellationToken);
-        ProjectCompositionDto GetProjectComposition(string name);
+        Task<ProjectCompositionDto> GetProjectCompositionAsync(string name, CancellationToken cancellationToken);
     }
 }

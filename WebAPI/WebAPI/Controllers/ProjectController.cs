@@ -98,12 +98,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("composition")]
-        public ActionResult GetProjectsComposition(string name)
+        public async Task<ActionResult> GetProjectsCompositionAsync(string name, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(name))
                 return BadRequest();
 
-            var composition = _projectService.GetProjectComposition(name);
+            var composition = await _projectService.GetProjectCompositionAsync(name, cancellationToken);
             return composition != null ? Ok(composition) : NotFound();
         }
     }

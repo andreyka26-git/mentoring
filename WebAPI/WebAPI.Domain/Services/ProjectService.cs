@@ -49,16 +49,15 @@ namespace WebAPI.Infrastructure.Services
 
         public async Task UpdateProjectAsync(int id, PostProjectDto project, CancellationToken token)
         {
-            var entity = _mapper.Map<Project>(project);
-            entity.Id = id;
-            _unitOfWork.Projects.Update(entity);
+            var entity = await _unitOfWork.Projects.GetAsync(id, token);
+            var model = new Project(entity.Id, project.Name, project.Duration);
+            _unitOfWork.Projects.Update(model);
             await _unitOfWork.SaveAsync(token);
         }
 
         public async Task<bool> AssignToProjectAsync(int id, string name, CancellationToken token)
         {
-            var project =
-                _unitOfWork.Projects.Find(name: name).FirstOrDefault();
+            var project = (await _unitOfWork.Projects.FindAsync(token, name: name)).FirstOrDefault();
             if (project == null)
                 return false;
 
@@ -71,18 +70,16 @@ namespace WebAPI.Infrastructure.Services
             return true;
         }
 
-        public ProjectCompositionDto GetProjectComposition(string name)
+        public async Task<ProjectCompositionDto> GetProjectCompositionAsync(string name, CancellationToken token)
         {
-            var project =
-                _unitOfWork.Projects.Find(name: name)
-                    .FirstOrDefault();
+            var project = (await _unitOfWork.Projects.FindAsync(token, name: name)).FirstOrDefault();
             if (project == null)
                 return null;
 
             var composition = new ProjectCompositionDto
             {
                 Project = _mapper.Map<PostProjectDto>(project),
-                Employees = _mapper.Map<IEnumerable<GetEmployeeDto>>(_unitOfWork.Employees.Find(projectId: project.Id))
+                Employees = _mapper.Map<IEnumerable<GetEmployeeDto>>(await _unitOfWork.Employees.FindAsync(token, projectId: project.Id))
             };
 
             return composition;
@@ -90,8 +87,7 @@ namespace WebAPI.Infrastructure.Services
 
         public async Task<bool> UnAssignFromProjectAsync(int id, string name, CancellationToken token)
         {
-            var project =
-                _unitOfWork.Projects.Find(name: name).FirstOrDefault();
+            var project = (await _unitOfWork.Projects.FindAsync(token, name: name)).FirstOrDefault();
             if (project == null)
                 return false;
 

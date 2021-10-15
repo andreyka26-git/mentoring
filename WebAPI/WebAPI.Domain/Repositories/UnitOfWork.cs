@@ -21,9 +21,9 @@ namespace WebAPI.Infrastructure.Repositories
             Projects = projectRepository;
         }
 
-        public async Task SaveAsync(CancellationToken cancellationToken)
+        public Task SaveAsync(CancellationToken cancellationToken)
         {
-            await _context.SaveChangesAsync(cancellationToken);
+            return _context.SaveChangesAsync(cancellationToken);
         }
 
         public void Dispose()
@@ -34,9 +34,9 @@ namespace WebAPI.Infrastructure.Repositories
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) 
+            if (_disposed)
                 return;
-            
+
             if (disposing)
             {
                 _context.Dispose();

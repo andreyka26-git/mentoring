@@ -46,9 +46,9 @@ namespace WebAPI.Infrastructure.Services
 
         public async Task UpdateEmployeeAsync(int id, PostEmployeeDto employee, CancellationToken token)
         {
-            var entity = _mapper.Map<Employee>(employee);
-            entity.Id = id;
-            _unitOfWork.Employees.Update(entity);
+            var entity = await _unitOfWork.Employees.GetAsync(id, token);
+            var model = new Employee(entity.Id, employee.FirstName, employee.LastName, employee.IsHigherEducation, entity.ProjectId);
+            _unitOfWork.Employees.Update(model);
             await _unitOfWork.SaveAsync(token);
         }
     }

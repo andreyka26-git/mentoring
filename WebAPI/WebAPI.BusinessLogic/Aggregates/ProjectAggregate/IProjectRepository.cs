@@ -8,7 +8,7 @@ namespace WebAPI.Domain.Aggregates.ProjectAggregate
     {
         Task<List<Project>> GetAllAsync(CancellationToken token);
         Task<Project> GetAsync(int id, CancellationToken token);
-        IEnumerable<Project> Find(int? id = null, string name = null, int? duration = null);
+        Task<List<Project>> FindAsync(CancellationToken token, int? id = null, string name = null, int? duration = null);
         Task CreateAsync(Project item, CancellationToken token);
         void Update(Project item);
         Task DeleteAsync(int id, CancellationToken token);
