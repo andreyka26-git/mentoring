@@ -18,12 +18,6 @@ namespace WebAPI.Client
             _domain = new Uri(domain);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         public async Task<List<GetEmployeeDto>> GetEmployees(string fieldOrderBy = null)
         {
             var uriBuilder = new UriBuilder(_domain);
@@ -72,6 +66,12 @@ namespace WebAPI.Client
         {
             return
                 $"Id: {employee.Id}, Full name: {employee.FirstName} {employee.LastName}, Higher education: {employee.IsHigherEducation}";
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
