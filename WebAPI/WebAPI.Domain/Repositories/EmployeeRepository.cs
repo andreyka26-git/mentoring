@@ -20,7 +20,7 @@ namespace WebAPI.Infrastructure.Repositories
 
         public Task<List<Employee>> GetAllAsync(CancellationToken token, EmployeeFiltering filter, string orderBy, string fieldOrder)
         {
-            var employees =  _db.Employees
+            var employees = _db.Employees
                 .Skip((filter.PagingModel.PageNumber - 1) * filter.PagingModel.PageSize)
                 .Take(filter.PagingModel.PageSize);
 
@@ -80,7 +80,7 @@ namespace WebAPI.Infrastructure.Repositories
 
         public async Task DeleteAsync(int id, CancellationToken token)
         {
-            var employee = await _db.Employees.FindAsync(id, token);
+            var employee = await _db.Employees.FindAsync(new[] { (object)id }, cancellationToken: token);
             if (employee != null)
                 _db.Employees.Remove(employee);
         }
