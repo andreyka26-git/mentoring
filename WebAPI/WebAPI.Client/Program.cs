@@ -19,22 +19,27 @@ namespace WebAPI.Client
 
             // Create employee.
             var employeeToAdd = new PostEmployeeDto
-            { FirstName = "ClientFN3", LastName = "ClientLN3", IsHigherEducation = true };
+            { FirstName = "ClientNew5", LastName = "ClientNew5", IsHigherEducation = true };
             Console.WriteLine(await service.AddEmployee(employeeToAdd));
 
-            //Update employee.
-            const int id = 10;
+            // Update employee.
+            const int id = 6;
             var employeeToUpdate = new PostEmployeeDto
-            { FirstName = "ClientUpdateFN1", LastName = "ClientUpdateLN2", IsHigherEducation = false };
+            { FirstName = "NewUpdate", LastName = "NewUpdate", IsHigherEducation = false };
             await service.UpdateEmployee(id, employeeToUpdate);
 
             //Get employee by id
-            const int idToFind = 10;
+            const int idToFind = 6;
             Console.WriteLine(await service.GetEmployee(idToFind));
 
             //Delete employee by id
-            const int employeeToDelete = 10;
+            const int employeeToDelete = 6;
             await service.DeleteEmployee(employeeToDelete);
+
+            // Get employees.
+            employees = await service.GetEmployees("FirstName");
+            foreach (var employee in employees)
+                Console.WriteLine(service.EmployeeToString(employee));
         }
     }
 }
