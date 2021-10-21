@@ -1,58 +1,36 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Snippet2
 {
     public class Parrot
     {
-        private ParrotTypeEnum m_Type;
-        private int m_NumberOfCoconuts = 0;
-        private double m_Voltage;
-        private bool m_IsNailed;
+        private const double LoadFactorConst = 9.0;
+        private const double BaseSpeedConst = 12.0;
 
+        private readonly ParrotTypeEnum _type;
+        private readonly int _numberOfCoconuts;
+        private readonly double _voltage;
+        private readonly bool _isNailed;
 
         public Parrot(ParrotTypeEnum type, int numberOfCoconuts, double voltage, bool isNailed)
         {
-            this.m_Type = type;
-            this.m_NumberOfCoconuts = numberOfCoconuts;
-            this.m_Voltage = voltage;
-            this.m_IsNailed = isNailed;
+            _type = type;
+            _numberOfCoconuts = numberOfCoconuts;
+            _voltage = voltage;
+            _isNailed = isNailed;
         }
 
-        public async Task<double> getSpeed()
+        public double GetSpeed()
         {
-            switch (m_Type)
+            return _type switch
             {
-                case ParrotTypeEnum.EUROPEAN:
-                    return GetBaseSpeed();
-                case ParrotTypeEnum.AFRICAN:
-                    return Math.Max(0, GetBaseSpeed() - GetLoadFactor() * m_NumberOfCoconuts);
-                case ParrotTypeEnum.NORWEGIAN_BLUE:
-                    return (m_IsNailed) ? 0 : await GetBaseSpeed(m_Voltage);
-            }
-            throw new Exception("Should be unreachable");
+                ParrotTypeEnum.European => BaseSpeedConst,
+                ParrotTypeEnum.African => Math.Max(0, BaseSpeedConst - LoadFactorConst * _numberOfCoconuts),
+                ParrotTypeEnum.NorwegianBlue => _isNailed ? 0 : GetBaseSpeed(_voltage),
+                _ => throw new Exception("Should be unreachable")
+            };
         }
 
-        private async Task<Double> GetBaseSpeed(double voltage)
-        {
-            return Math.Min(24.0, voltage * GetBaseSpeed());
-        }
-
-        private double GetLoadFactor()
-        {
-            return 9.0;
-        }
-
-        private double GetBaseSpeed()
-        {
-            return 12.0;
-        }
-
-        public enum ParrotTypeEnum
-        {
-            EUROPEAN,
-            AFRICAN,
-            NORWEGIAN_BLUE
-        }
+        private static double GetBaseSpeed(double voltage) => Math.Min(24.0, voltage * BaseSpeedConst);
     }
 }
