@@ -7,26 +7,26 @@ namespace Snippet2
         private const double LoadFactorConst = 9.0;
         private const double BaseSpeedConst = 12.0;
 
-        private readonly ParrotTypeEnum _mType;
-        private readonly int _mNumberOfCoconuts;
-        private readonly double _mVoltage;
-        private readonly bool _mIsNailed;
+        private readonly ParrotTypeEnum _type;
+        private readonly int _numberOfCoconuts;
+        private readonly double _voltage;
+        private readonly bool _isNailed;
 
         public Parrot(ParrotTypeEnum type, int numberOfCoconuts, double voltage, bool isNailed)
         {
-            _mType = type;
-            _mNumberOfCoconuts = numberOfCoconuts;
-            _mVoltage = voltage;
-            _mIsNailed = isNailed;
+            _type = type;
+            _numberOfCoconuts = numberOfCoconuts;
+            _voltage = voltage;
+            _isNailed = isNailed;
         }
 
         public double GetSpeed()
         {
-            return _mType switch
+            return _type switch
             {
                 ParrotTypeEnum.European => BaseSpeedConst,
-                ParrotTypeEnum.African => Math.Max(0, BaseSpeedConst - LoadFactorConst * _mNumberOfCoconuts),
-                ParrotTypeEnum.NorwegianBlue => _mIsNailed ? 0 : GetBaseSpeed(_mVoltage),
+                ParrotTypeEnum.African => Math.Max(0, BaseSpeedConst - LoadFactorConst * _numberOfCoconuts),
+                ParrotTypeEnum.NorwegianBlue => _isNailed ? 0 : GetBaseSpeed(_voltage),
                 _ => throw new Exception("Should be unreachable")
             };
         }

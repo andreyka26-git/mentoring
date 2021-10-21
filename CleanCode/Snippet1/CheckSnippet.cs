@@ -3,48 +3,47 @@
     public class CheckSnippet
     {
         private const char ApostrophesSign = '\'';
-        private readonly string _mUser;
-        private readonly string _mUrl;
-        private readonly string _mUrlPath;
-        private readonly bool _mIsAddNamespaceReservationOption;
+        private readonly string _user;
+        private readonly string _url;
+        private readonly string _urlPath;
+        private readonly bool _isAddNamespaceReservationOption;
         private readonly Validator _validator;
-        private readonly int _mPort;
-        private readonly Config _mConf;
+        private readonly int _port;
+        private readonly Config _conf;
 
-        public CheckSnippet(string mUser, string mUrl, string mUrlPath, bool mIsAddNamespaceReservationOption, Validator validator, int mPort, Config mConf)
+        public CheckSnippet(string user, string url, string urlPath, bool isAddNamespaceReservationOption, Validator validator, int port, Config conf)
         {
-            _mUser = mUser;
-            _mUrl = mUrl;
-            _mUrlPath = mUrlPath;
-            _mIsAddNamespaceReservationOption = mIsAddNamespaceReservationOption;
+            _user = user;
+            _url = url;
+            _urlPath = urlPath;
+            _isAddNamespaceReservationOption = isAddNamespaceReservationOption;
             _validator = validator;
-            _mPort = mPort;
-            _mConf = mConf;
+            _port = port;
+            _conf = conf;
         }
-
-        private static bool IsNullOrEmpty(string s) => s is {Length: > 0};
 
         private static string TrimApostrophes(string path) => path.Trim(ApostrophesSign);
 
         private bool CheckAddNamespaceReservationParameters()
         {
-            var isUserParamSet = !IsNullOrEmpty(_mUser);
-            var isUrlParamSet = !IsNullOrEmpty(_mUrl);
-            var isUrlPathParamSet = !IsNullOrEmpty(_mUrlPath);
+            var isAtLeastOneNotEmpty = !string.IsNullOrEmpty(_user) || !string.IsNullOrEmpty(_url) || !string.IsNullOrEmpty(_urlPath);
 
-            if (!_mIsAddNamespaceReservationOption || !isUrlParamSet || !isUserParamSet || !isUrlPathParamSet)
+            if (!isAtLeastOneNotEmpty)
                 return false;
 
-            var isValid = _validator.ValidateUrl(_mUrl) && _validator.ValidateUser(_mUser)
-                                                        && _validator.ValidateUrlPath(_mUrlPath) && _validator.ValidatePort(_mPort);
-            if (!isValid) return
-                false;
+            var isValid = _validator.ValidateUrl(_url) &&
+                          _validator.ValidateUser(_user) &&
+                          _validator.ValidateUrlPath(_urlPath) &&
+                          _validator.ValidatePort(_port);
 
-            _mConf.Option = ExecutionOption.AddNamespace;
-            _mConf.User = _mUser;
-            _mConf.Url = _mUrl;
-            _mConf.Port = _mPort;
-            _mConf.UrlPath = TrimApostrophes(_mUrlPath);
+            if (!isValid)
+                return false;
+
+            _conf.Option = ExecutionOption.AddNamespace;
+            _conf.User = _user;
+            _conf.Url = _url;
+            _conf.Port = _port;
+            _conf.UrlPath = TrimApostrophes(_urlPath);
 
             return true;
         }
